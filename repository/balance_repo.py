@@ -27,10 +27,3 @@ class BalanceSheet(object):
 
     def get_column(self) -> list:
         return list(self.__df.columns)
-
-
-if __name__ == "__main__":
-    a = BalanceSheet("../data/balance_sheet.csv")
-    a.load()
-    print(a.get_data('货币资金(万元)'))
-    print(a.get_column())
