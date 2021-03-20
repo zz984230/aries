@@ -45,6 +45,4 @@ def update_bar_chart(dims):
 
 
 if __name__ == '__main__':
-    a = "Aaa"
-    print(f"{a}:vvv")
     app.run_server(debug=True)
