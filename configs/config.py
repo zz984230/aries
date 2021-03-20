@@ -11,10 +11,12 @@ class Config(object):
         self.__src_data_dir = None
 
     def init(self):
-        print(self.__etc_file)
-        with open(self.__etc_file, 'r') as f:
-            data = toml.load(f)
-            self.__src_data_dir = os.path.join(Util.get_root_path(), data["report"]["default_src_path"])
+        try:
+            with open(self.__etc_file, 'r') as f:
+                data = toml.load(f)
+                self.__src_data_dir = os.path.join(Util.get_root_path(), data["report"]["default_src_path"])
+        except IOError as e:
+            raise e
 
     @property
     def src_data_dir(self):
