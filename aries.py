@@ -2,17 +2,17 @@ from configs.config import Config
 import fire
 
 
-class Server(object):
+class Program(object):
     def __init__(self):
         self.__cfg = Config()
-        self.__init_config()
 
-    def __init_config(self):
+    def __init(self):
         self.__cfg.init()
 
     def start(self):
+        self.__init()
         print("Good")
 
 
 if __name__ == "__main__":
-    fire.Fire(Server)
+    fire.Fire(Program)
