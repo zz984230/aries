@@ -17,4 +17,5 @@ def add_layout(layouts):
 
 
 def clear_layout():
+    global __children
     __children = []

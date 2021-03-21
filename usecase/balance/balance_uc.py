@@ -26,11 +26,11 @@ class BalanceUc(object):
                 value=[self.__df[BALANCE_YEAR].min(), self.__df[BALANCE_YEAR].max()],
                 marks={str(ymd): str(ymd) for ymd in self.__df[BALANCE_YEAR].unique()},
             ),
-            dcc.Dropdown(
-                id='dataframe',
-                options=[{'label': col, 'value': self.__df[[BALANCE_COL_START, col]]} for col in self.__repo.get_column()],
-                value=self.__df[[BALANCE_COL_START, BALANCE_DEFAULT_DRAW]]
-            ),
+            # dcc.Dropdown(
+            #     id='dataframe',
+            #     options=[{'label': col, 'value': self.__df[[BALANCE_COL_START, col]]} for col in self.__repo.get_column()],
+            #     value=self.__df[[BALANCE_COL_START, BALANCE_DEFAULT_DRAW]]
+            # ),
             dcc.Graph(id="balance"),
         ])
 
@@ -38,3 +38,4 @@ class BalanceUc(object):
         self.__get_data()
         self.__deal_data()
         self.__set_layout()
+        self.__prt.draw(self.__df)

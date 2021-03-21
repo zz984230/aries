@@ -11,7 +11,7 @@ class Program(object):
 
     def __init(self):
         self.__cfg.init()
-        self.__balance_uc = BalanceUc(self.__cfg, BalancePt)
+        self.__balance_uc = BalanceUc(self.__cfg, BalancePt())
 
     def start(self):
         self.__init()
