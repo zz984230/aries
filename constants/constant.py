@@ -1,1 +1,3 @@
 PROJECT_NAME = 'aries'
+BALANCE_COL_START = '报告日期'
+BALANCE_YEAR = 'YEAR'

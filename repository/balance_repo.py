@@ -1,4 +1,5 @@
 import pandas as pd
+from constants.constant import *
 
 
 class BalanceSheet(object):
@@ -7,12 +8,19 @@ class BalanceSheet(object):
         self.__df = pd.DataFrame()
 
     def __transform(self):
-        old_col = self.__df['报告日期']
-        col_name = ['报告日期']
+        old_col = self.__df[BALANCE_COL_START]
+        col_name = [BALANCE_COL_START]
         col_name.extend(old_col)
-        self.__df = self.__df.drop(columns=['报告日期']).dropna(axis=1).replace('--', 0).replace(' --', 0).T.reset_index()
+        self.__df = self.__df.drop(columns=[BALANCE_COL_START]) \
+            .dropna(axis=1) \
+            .replace('--', 0) \
+            .replace(' --', 0) \
+            .T \
+            .reset_index()
         self.__df.columns = col_name
         self.__df[old_col] = self.__df[old_col].astype('float')
+        self.__df[BALANCE_COL_START] = pd.to_datetime(self.__df[BALANCE_COL_START])
+        self.__df[BALANCE_YEAR] = self.__df[BALANCE_COL_START].dt.year
 
     def load(self):
         self.__df = pd.read_csv(self.__src_path, encoding='gbk')
