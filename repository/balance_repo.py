@@ -6,9 +6,10 @@ class BalanceSheet(object):
     def __init__(self, src_data_file):
         self.__src_path = src_data_file
         self.__df = pd.DataFrame()
+        self.__cols = list()
 
     def __transform(self):
-        old_col = self.__df[BALANCE_COL_START]
+        self.__cols = old_col = self.__df[BALANCE_COL_START]
         col_name = [BALANCE_COL_START]
         col_name.extend(old_col)
         self.__df = self.__df.drop(columns=[BALANCE_COL_START]) \
@@ -34,4 +35,4 @@ class BalanceSheet(object):
         return self.__df[col_name]
 
     def get_column(self) -> list:
-        return list(self.__df.columns)
+        return list(self.__cols)
