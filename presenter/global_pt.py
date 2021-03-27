@@ -9,7 +9,7 @@ class GlobalPt(object):
         self.__left_layout = dbc.Col(children=html.Div(), width=2, style=dict(background=SILVER))
         self.__right_layout = dbc.Col(id='right_layout')
 
-    def set_layout(self):
+    def set_global_layout(self):
         add_layout(html.Div(
             children=[
                 dbc.Row(
@@ -20,7 +20,11 @@ class GlobalPt(object):
                 )
             ],
         ))
+
         return self
+
+    def set_left_layout(self):
+        pass
 
     def get_left_div(self):
         return self.__left_layout

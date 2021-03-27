@@ -12,7 +12,7 @@ class Program(object):
 
     def __init(self):
         self.__cfg.init()
-        self.__global_pt = GlobalPt().set_layout()
+        self.__global_pt = GlobalPt().set_global_layout()
         self.__balance_uc = BalanceUc(self.__cfg, BalancePt(self.__global_pt.get_right_div()))
 
     def start(self):
