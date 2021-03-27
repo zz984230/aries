@@ -8,12 +8,13 @@ import plotly.express as px
 
 
 class BalancePt(object):
-    def __init__(self):
+    def __init__(self, base_layout):
+        self.__base_layout = base_layout
         self.__half_left_width_stl = dict(width='50%', float='left')
         self.__half_right_width_stl = dict(width='50%', float='right')
 
     def set_layout(self, df, cols):
-        c1 = [
+        self.__base_layout.children = html.Div([
             dcc.Markdown("# 资产负债表"),
             dcc.Markdown("## 1. 基本信息"),
             html.Div([
@@ -50,30 +51,36 @@ class BalancePt(object):
                 dcc.Graph(id="balance2"),
                 dcc.Graph(id="balance2_1"),
             ], style=self.__half_right_width_stl),
-        ]
-        add_layout(c1)
+        ])
+        # add_layout(self.__base_layout)
 
     def draw(self, df):
-        @app.callback(Output("balance1", "figure"), [Input("balance_slider1", "value"), Input("balance_dropdown1", "value")])
+        @app.callback(Output("balance1", "figure"),
+                      [Input("balance_slider1", "value"), Input("balance_dropdown1", "value")])
         def floating_assets_chart(date, data_col):
-            fig = px.bar(df[(df[BALANCE_YEAR] >= date[0]) & (df[BALANCE_YEAR] <= date[1])], x=BALANCE_COL_START, y=data_col, color=data_col)
+            fig = px.bar(df[(df[BALANCE_YEAR] >= date[0]) & (df[BALANCE_YEAR] <= date[1])], x=BALANCE_COL_START,
+                         y=data_col, color=data_col)
             fig.update_xaxes(tickangle=45, tickformat='%Y-%m-%d')
             return fig
 
         @app.callback(Output("balance1_1", "figure"), [Input("balance_slider1", "value")])
         def floating_assets_all_chart(date):
-            fig = px.bar(df[(df[BALANCE_YEAR] >= date[0]) & (df[BALANCE_YEAR] <= date[1])], x=BALANCE_COL_START, y=BALANCE_FLOW_ASSETS_ALL, color=BALANCE_FLOW_ASSETS_ALL)
+            fig = px.bar(df[(df[BALANCE_YEAR] >= date[0]) & (df[BALANCE_YEAR] <= date[1])], x=BALANCE_COL_START,
+                         y=BALANCE_FLOW_ASSETS_ALL, color=BALANCE_FLOW_ASSETS_ALL)
             fig.update_xaxes(tickangle=45, tickformat='%Y-%m-%d')
             return fig
 
-        @app.callback(Output("balance2", "figure"), [Input("balance_slider2", "value"), Input("balance_dropdown2", "value")])
+        @app.callback(Output("balance2", "figure"),
+                      [Input("balance_slider2", "value"), Input("balance_dropdown2", "value")])
         def fixed_assets_chart(date, data_col):
-            fig = px.bar(df[(df[BALANCE_YEAR] >= date[0]) & (df[BALANCE_YEAR] <= date[1])], x=BALANCE_COL_START, y=data_col, color=data_col)
+            fig = px.bar(df[(df[BALANCE_YEAR] >= date[0]) & (df[BALANCE_YEAR] <= date[1])], x=BALANCE_COL_START,
+                         y=data_col, color=data_col)
             fig.update_xaxes(tickangle=45, tickformat='%Y-%m-%d')
             return fig
 
         @app.callback(Output("balance2_1", "figure"), [Input("balance_slider2", "value")])
         def fixed_assets_all_chart(date):
-            fig = px.bar(df[(df[BALANCE_YEAR] >= date[0]) & (df[BALANCE_YEAR] <= date[1])], x=BALANCE_COL_START, y=BALANCE_FIXED_ASSETS_ALL, color=BALANCE_FIXED_ASSETS_ALL)
+            fig = px.bar(df[(df[BALANCE_YEAR] >= date[0]) & (df[BALANCE_YEAR] <= date[1])], x=BALANCE_COL_START,
+                         y=BALANCE_FIXED_ASSETS_ALL, color=BALANCE_FIXED_ASSETS_ALL)
             fig.update_xaxes(tickangle=45, tickformat='%Y-%m-%d')
             return fig

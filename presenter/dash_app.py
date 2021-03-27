@@ -14,7 +14,13 @@ def add_layout(layouts):
     else:
         __children.append(layouts)
 
+
+def render():
     app.layout = html.Div(__children)
+
+
+def show_children():
+    print(__children)
 
 
 def clear_layout():

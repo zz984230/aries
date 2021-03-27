@@ -3,9 +3,9 @@ import pandas as pd
 
 
 class BalanceUc(object):
-    def __init__(self, cfg, presenter):
+    def __init__(self, cfg, prt):
         self.__repo = BalanceSheet(cfg.src_data_dir).load()
-        self.__prt = presenter
+        self.__prt = prt
         self.__df = pd.DataFrame()
         self.__cols = list()
 
