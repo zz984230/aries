@@ -1,8 +1,9 @@
 from dash import Dash
 import dash_html_components as html
 
-__CSS = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = Dash(__name__, external_stylesheets=__CSS)
+# __CSS = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+__CSS = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+app = Dash(external_stylesheets=[__CSS])
 app.layout = html.Div()
 __children = []
 
