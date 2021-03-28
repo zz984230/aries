@@ -1,7 +1,6 @@
 from presenter.dash_app import *
 from dash.dependencies import Input, Output
 from constants.constant import *
-import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
 import plotly.express as px
@@ -52,9 +51,8 @@ class BalancePt(object):
                 dcc.Graph(id="balance2_1"),
             ], style=self.__half_right_width_stl),
         ])
-        # add_layout(self.__base_layout)
 
-    def draw(self, df):
+    def render(self, df):
         @app.callback(Output("balance1", "figure"),
                       [Input("balance_slider1", "value"), Input("balance_dropdown1", "value")])
         def floating_assets_chart(date, data_col):

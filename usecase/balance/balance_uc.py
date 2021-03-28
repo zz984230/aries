@@ -23,4 +23,4 @@ class BalanceUc(object):
         self.__get_data()
         self.__deal_data()
         self.__set_layout()
-        self.__prt.draw(self.__df)
+        self.__prt.render(self.__df)
