@@ -7,14 +7,27 @@ import dash_html_components as html
 
 
 class GlobalPt(object):
-    def __init__(self):
-        self.__left_layout = dbc.Col(children=html.Div(), id='left_layout', width=1, style=dict(background=GAINSBORO))
+    def __init__(self, logo_file):
+        self.__left_layout = dbc.Col(id='left_layout', xs=1, style=dict(background=GAINSBORO))
         self.__right_layout = dbc.Col(id='right_layout', style=dict(background=WHITE_SMOKE))
         self.__labels = ['资产负债表', '利润表', '现金流量表']
+        self.__logo_file = logo_file
 
     def set_global_layout(self):
         add_layout(html.Div(
             children=[
+                dbc.Row(
+                    dbc.Navbar(
+                        [
+                            dbc.Col(html.Img(src=self.__logo_file, height="40px")),
+                            dbc.Col(dbc.NavbarBrand("Aries")),
+                            dbc.Col()
+                        ],
+                        color=LIMBO_BLACK,
+                        dark=True,
+                    ),
+                    style=dict(background=LIMBO_BLACK)
+                ),
                 dbc.Row(
                     [
                         self.__left_layout,
@@ -28,16 +41,16 @@ class GlobalPt(object):
 
     def __set_each_left_layout(self, num):
         return [
-            html.Div(
+            dbc.Row(
                 [
-                    dbc.Button(self.__labels[i], id=f"collapse-button-{i}", color="dark", outline=True, block=True),
+                    dbc.Button(self.__labels[i], id=f"collapse-button-{i}", color="dark", outline=True, block=True, style={"border-style": "none"}),
                     dbc.Collapse(dbc.CardBody(f"This is the content of group {i}..."), id=f"collapse-{i}")
                 ]
             ) for i in range(num)
         ]
 
     def set_left_layout(self):
-        self.__left_layout.children = html.Div(self.__set_each_left_layout(len(self.__labels)))
+        self.__left_layout.children = self.__set_each_left_layout(len(self.__labels))
         return self
 
     def get_left_div(self):

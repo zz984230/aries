@@ -1,2 +1,5 @@
 [report]
 default_src_path = "data/balance_sheet.csv"
+
+[icon]
+logo_file = "./static/aries.jpg"
