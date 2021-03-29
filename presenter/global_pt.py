@@ -39,18 +39,44 @@ class GlobalPt(object):
 
         return self
 
-    def __set_each_left_layout(self, num):
-        return [
-            dbc.Row(
-                [
-                    dbc.Button(self.__labels[i], id=f"collapse-button-{i}", color="dark", outline=True, block=True, style={"border-style": "none"}),
-                    dbc.Collapse(dbc.CardBody(f"This is the content of group {i}..."), id=f"collapse-{i}")
-                ]
-            ) for i in range(num)
-        ]
+    def __set_each_left_layout(self, i, button_group):
+        return dbc.Row(
+            [
+                dbc.Button(self.__labels[i], id=f"collapse-button-{i}", color="dark", outline=True, block=True,
+                           style={"border-style": "none"}),
+                dbc.Collapse(button_group, id=f"collapse-{i}", style={"width": "100%"})
+                # dbc.Collapse(dbc.CardBody(f"This is the content of group {i}..."), id=f"collapse-{i}")
+            ]
+        )
 
     def set_left_layout(self):
-        self.__left_layout.children = self.__set_each_left_layout(len(self.__labels))
+        button_group = [
+            [
+                dbc.Button("资产", block=True),
+                dbc.Button("负债", block=True),
+                dbc.Button("股东权益", block=True),
+            ],
+            [
+                dbc.Button("收入", block=True),
+                dbc.Button("成本", block=True),
+                dbc.Button("利润", block=True),
+                dbc.Button("每股权益", block=True),
+            ],
+            [
+                dbc.Button("经营活动", block=True),
+                dbc.Button("投资活动", block=True),
+                dbc.Button("筹资活动", block=True),
+                dbc.Button("其他", block=True),
+            ]
+        ]
+
+        self.__left_layout.children = [
+            self.__set_each_left_layout(i, dbc.ButtonGroup(
+                button_group[i],
+                vertical=True,
+                style={"width": "inherit"}
+            )) for i in range(len(self.__labels))
+        ]
         return self
 
     def get_left_div(self):
@@ -63,6 +89,22 @@ class GlobalPt(object):
         @app.callback([Output(f"collapse-button-{i}", "active") for i in range(len(self.__labels))],
                       [Input(f"collapse-button-{i}", "n_clicks") for i in range(len(self.__labels))])
         def click(*args):
+            ctx = dash.callback_context
+            if not ctx.triggered:
+                return [False for _ in range(len(args))]
+            else:
+                button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+            index = 0
+            for k, v in enumerate(args):
+                if v and button_id == f"collapse-button-{k}":
+                    index = k
+
+            return [True if index == i else False for i in range(len(args))]
+
+        @app.callback([Output(f"collapse-{i}", "is_open") for i in range(len(self.__labels))],
+                      [Input(f"collapse-button-{i}", "n_clicks") for i in range(len(self.__labels))])
+        def collapse(*args):
             ctx = dash.callback_context
             if not ctx.triggered:
                 return [False for _ in range(len(args))]
