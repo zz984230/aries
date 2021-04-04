@@ -7,13 +7,24 @@ import dash_html_components as html
 
 
 class GlobalPt(object):
-    def __init__(self, logo_file):
-        self.__left_layout = dbc.Col(id='left_layout', xs=1, style=dict(background=GAINSBORO))
-        self.__right_layout = dbc.Col(id='right_layout', style=dict(background=WHITE_SMOKE))
-        self.__labels = ['资产负债表', '利润表', '现金流量表']
+    def __init__(self, logo_file, bg_file):
         self.__logo_file = logo_file
+        self.__bg_file = bg_file
+        self.__labels = ['资产负债表', '利润表', '现金流量表']
+
+    def __init_layout(self):
+        self.__left_layout = dbc.Col(id='left_layout', xs=1, style=dict(background=GAINSBORO))
+        self.__right_layout = dbc.Col(
+            html.Img(
+                src=self.__bg_file,
+                style={"position": "absolute", "top": "25%", "left": "30%"}
+            ),
+            id='right_layout',
+            style=dict(background=WHITE_SMOKE),
+        )
 
     def set_global_layout(self):
+        self.__init_layout()
         add_layout(html.Div(
             children=[
                 dbc.Row(
@@ -32,7 +43,8 @@ class GlobalPt(object):
                     [
                         self.__left_layout,
                         self.__right_layout,
-                    ]
+                    ],
+                    style=dict(height="850px")
                 )
             ],
         ))
@@ -45,7 +57,6 @@ class GlobalPt(object):
                 dbc.Button(self.__labels[i], id=f"collapse-button-{i}", color="dark", outline=True, block=True,
                            style={"border-style": "none"}),
                 dbc.Collapse(button_group, id=f"collapse-{i}", style={"width": "100%"})
-                # dbc.Collapse(dbc.CardBody(f"This is the content of group {i}..."), id=f"collapse-{i}")
             ]
         )
 

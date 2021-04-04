@@ -10,6 +10,7 @@ class Config(object):
         self.__etc_file = os.path.join(_ETC_DIR, 'financial_report.toml')
         self.__src_data_dir = None
         self.__logo_file = None
+        self.__bg_file = None
 
     def init(self):
         root_path = Util.get_root_path()
@@ -18,6 +19,7 @@ class Config(object):
                 data = toml.load(f)
                 self.__src_data_dir = os.path.join(root_path, data["report"]["default_src_path"])
                 self.__logo_file = data["icon"]["logo_file"]
+                self.__bg_file = data["icon"]["bg_file"]
         except IOError as e:
             raise e
 
@@ -28,3 +30,7 @@ class Config(object):
     @property
     def logo_file(self):
         return self.__logo_file
+
+    @property
+    def bg_file(self):
+        return self.__bg_file

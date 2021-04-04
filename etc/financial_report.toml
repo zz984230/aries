@@ -3,3 +3,4 @@ default_src_path = "data/balance_sheet.csv"
 
 [icon]
 logo_file = "./static/aries.jpg"
+bg_file = "./static/aries_bg.png"
