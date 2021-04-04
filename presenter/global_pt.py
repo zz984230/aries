@@ -11,6 +11,11 @@ class GlobalPt(object):
         self.__logo_file = logo_file
         self.__bg_file = bg_file
         self.__labels = ['资产负债表', '利润表', '现金流量表']
+        self.__clicked_button_id = ""
+        self.__balance_uc = None
+
+    def set_balance_uc(self, balance_uc):
+        self.__balance_uc = balance_uc
 
     def __init_layout(self):
         self.__left_layout = dbc.Col(id='left_layout', xs=1, style=dict(background=GAINSBORO))
@@ -63,21 +68,21 @@ class GlobalPt(object):
     def set_left_layout(self):
         button_group = [
             [
-                dbc.Button("资产", block=True),
-                dbc.Button("负债", block=True),
-                dbc.Button("股东权益", block=True),
+                dbc.Button("资产", id="balance-collapse-0", block=True),
+                dbc.Button("负债", id="balance-collapse-1", block=True),
+                dbc.Button("股东权益", id="balance-collapse-2", block=True),
             ],
             [
-                dbc.Button("收入", block=True),
-                dbc.Button("成本", block=True),
-                dbc.Button("利润", block=True),
-                dbc.Button("每股权益", block=True),
+                dbc.Button("收入", id="profit-collapse-0", block=True),
+                dbc.Button("成本", id="profit-collapse-1", block=True),
+                dbc.Button("利润", id="profit-collapse-2", block=True),
+                dbc.Button("每股权益", id="profit-collapse-3", block=True),
             ],
             [
-                dbc.Button("经营活动", block=True),
-                dbc.Button("投资活动", block=True),
-                dbc.Button("筹资活动", block=True),
-                dbc.Button("其他", block=True),
+                dbc.Button("经营活动", id="cash-flow-collapse-0", block=True),
+                dbc.Button("投资活动", id="cash-flow-collapse-1", block=True),
+                dbc.Button("筹资活动", id="cash-flow-collapse-2", block=True),
+                dbc.Button("其他", id="cash-flow-collapse-3", block=True),
             ]
         ]
 
@@ -97,6 +102,24 @@ class GlobalPt(object):
         return self.__right_layout
 
     def render(self):
+        @app.callback([Output(f"balance-collapse-{i}", "active") for i in range(3)],
+                      [Input(f"balance-collapse-{i}", "n_clicks") for i in range(3)])
+        def balance_button_click(*args):
+            ctx = dash.callback_context
+            if not ctx.triggered:
+                return [False for _ in range(len(args))]
+            else:
+                button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+            index = 0
+            for k, v in enumerate(args):
+                if v and button_id == f"balance-collapse-{k}":
+                    index = k
+                    # if k == 0:
+                    #     self.__balance_uc.run()
+
+            return [True if index == i else False for i in range(len(args))]
+
         @app.callback([Output(f"collapse-button-{i}", "active") for i in range(len(self.__labels))],
                       [Input(f"collapse-button-{i}", "n_clicks") for i in range(len(self.__labels))])
         def click(*args):

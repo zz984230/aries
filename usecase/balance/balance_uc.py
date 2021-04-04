@@ -17,7 +17,7 @@ class BalanceUc(object):
         pass
 
     def __set_layout(self):
-        self.__prt.set_layout(self.__df, self.__cols)
+        self.__prt.init_data(self.__df, self.__cols)
 
     def run(self):
         self.__get_data()

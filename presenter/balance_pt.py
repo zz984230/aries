@@ -4,6 +4,7 @@ from constants.constant import *
 import dash_html_components as html
 import dash_core_components as dcc
 import plotly.express as px
+import pandas as pd
 
 
 class BalancePt(object):
@@ -11,24 +12,30 @@ class BalancePt(object):
         self.__base_layout = base_layout
         self.__half_left_width_stl = dict(width='50%', float='left')
         self.__half_right_width_stl = dict(width='50%', float='right')
+        self.__df = pd.DataFrame()
+        self.__cols = []
 
-    def set_layout(self, df, cols):
-        self.__base_layout.children = html.Div([
+    def init_data(self, df, cols):
+        self.__df = df
+        self.__cols = cols
+
+    def __set_layout(self):
+        return html.Div([
             dcc.Markdown("# 资产负债表"),
             dcc.Markdown("## 1. 基本信息"),
             html.Div([
                 dcc.Markdown("### 流动资产信息"),
                 dcc.RangeSlider(
                     id='balance_slider1',
-                    min=df[BALANCE_COL_START].min().year,
-                    max=df[BALANCE_COL_START].max().year,
-                    value=[df[BALANCE_YEAR].min(), df[BALANCE_YEAR].max()],
-                    marks={str(ymd): str(ymd) for ymd in df[BALANCE_YEAR].unique()},
+                    min=self.__df[BALANCE_COL_START].min().year,
+                    max=self.__df[BALANCE_COL_START].max().year,
+                    value=[self.__df[BALANCE_YEAR].min(), self.__df[BALANCE_YEAR].max()],
+                    marks={str(ymd): str(ymd) for ymd in self.__df[BALANCE_YEAR].unique()},
                 ),
                 dcc.Dropdown(
                     id='balance_dropdown1',
-                    options=[{'label': c, 'value': c} for c in cols[:24]],
-                    value=cols[0],
+                    options=[{'label': c, 'value': c} for c in self.__cols[:24]],
+                    value=self.__cols[0],
                     multi=False),
                 dcc.Graph(id="balance1"),
                 dcc.Graph(id="balance1_1"),
@@ -37,15 +44,15 @@ class BalancePt(object):
                 dcc.Markdown("### 非流动资产信息"),
                 dcc.RangeSlider(
                     id='balance_slider2',
-                    min=df[BALANCE_COL_START].min().year,
-                    max=df[BALANCE_COL_START].max().year,
-                    value=[df[BALANCE_YEAR].min(), df[BALANCE_YEAR].max()],
-                    marks={str(ymd): str(ymd) for ymd in df[BALANCE_YEAR].unique()},
+                    min=self.__df[BALANCE_COL_START].min().year,
+                    max=self.__df[BALANCE_COL_START].max().year,
+                    value=[self.__df[BALANCE_YEAR].min(), self.__df[BALANCE_YEAR].max()],
+                    marks={str(ymd): str(ymd) for ymd in self.__df[BALANCE_YEAR].unique()},
                 ),
                 dcc.Dropdown(
                     id='balance_dropdown2',
-                    options=[{'label': c, 'value': c} for c in cols[25:51]],
-                    value=cols[25],
+                    options=[{'label': c, 'value': c} for c in self.__cols[25:51]],
+                    value=self.__cols[25],
                     multi=False),
                 dcc.Graph(id="balance2"),
                 dcc.Graph(id="balance2_1"),
@@ -53,6 +60,15 @@ class BalancePt(object):
         ])
 
     def render(self, df):
+        @app.callback(Output("right_layout", "children"),
+                      Input("balance-collapse-0", "active"))
+        def set_balance_layout(active):
+            children = self.__set_layout()
+            if active:
+                return children
+
+            return self.__base_layout.children
+
         @app.callback(Output("balance1", "figure"),
                       [Input("balance_slider1", "value"), Input("balance_dropdown1", "value")])
         def floating_assets_chart(date, data_col):
