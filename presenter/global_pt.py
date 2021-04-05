@@ -115,8 +115,6 @@ class GlobalPt(object):
             for k, v in enumerate(args):
                 if v and button_id == f"balance-collapse-{k}":
                     index = k
-                    # if k == 0:
-                    #     self.__balance_uc.run()
 
             return [True if index == i else False for i in range(len(args))]
 

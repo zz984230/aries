@@ -21,8 +21,6 @@ class BalancePt(object):
 
     def __set_layout(self):
         return html.Div([
-            dcc.Markdown("# 资产负债表"),
-            dcc.Markdown("## 1. 基本信息"),
             html.Div([
                 dcc.Markdown("### 流动资产信息"),
                 dcc.RangeSlider(
@@ -38,6 +36,7 @@ class BalancePt(object):
                     value=self.__cols[0],
                     multi=False),
                 dcc.Graph(id="balance1"),
+                dcc.Markdown("### 流动资产合计信息"),
                 dcc.Graph(id="balance1_1"),
             ], style=self.__half_left_width_stl),
             html.Div([
@@ -55,6 +54,7 @@ class BalancePt(object):
                     value=self.__cols[25],
                     multi=False),
                 dcc.Graph(id="balance2"),
+                dcc.Markdown("### 非流动资产合计信息"),
                 dcc.Graph(id="balance2_1"),
             ], style=self.__half_right_width_stl),
         ])
