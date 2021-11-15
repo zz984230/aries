@@ -9,7 +9,7 @@ import pandas as pd
 
 class BalancePt(object):
     def __init__(self, base_layout):
-        self.__base_layout = base_layout
+        # self.__base_layout = base_layout
         self.__half_left_width_stl = dict(width='50%', float='left')
         self.__half_right_width_stl = dict(width='50%', float='right')
         self.__df = pd.DataFrame()
@@ -19,7 +19,7 @@ class BalancePt(object):
         self.__df = df
         self.__cols = cols
 
-    def __set_layout(self):
+    def set_layout(self):
         return html.Div([
             html.Div([
                 dcc.Markdown("### 流动资产信息"),
@@ -60,14 +60,14 @@ class BalancePt(object):
         ])
 
     def render(self, df):
-        @app.callback(Output("right_layout", "children"),
-                      Input("balance-collapse-0", "active"))
-        def set_balance_layout(active):
-            children = self.__set_layout()
-            if active:
-                return children
-
-            return self.__base_layout.children
+        # @app.callback(Output("right_layout", "children"),
+        #               Input("balance-collapse-0", "active"))
+        # def set_balance_layout(active):
+        #     children = self.__set_layout()
+        #     if active:
+        #         return children
+        #
+        #     return self.__base_layout.children
 
         @app.callback(Output("balance1", "figure"),
                       [Input("balance_slider1", "value"), Input("balance_dropdown1", "value")])
