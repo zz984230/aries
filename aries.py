@@ -14,8 +14,8 @@ class Program(object):
 
     def __init(self):
         self.__cfg.init()
-        balance_pt = BalancePt(None)
-        valuation_pt = ValuationPt(None)
+        balance_pt = BalancePt()
+        valuation_pt = ValuationPt()
 
         self.__global_pt = GlobalPt(self.__cfg.logo_file, self.__cfg.bg_file, balance_pt, valuation_pt).set_global_layout().set_left_layout().render()
 

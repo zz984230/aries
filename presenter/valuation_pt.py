@@ -7,8 +7,7 @@ import pandas as pd
 
 
 class ValuationPt(object):
-    def __init__(self, base_layout):
-        # self.__base_layout = base_layout
+    def __init__(self):
         self.__half_left_width_stl = dict(width='50%', float='left')
         self.__half_right_width_stl = dict(width='50%', float='right')
         self.__df = pd.DataFrame()
@@ -30,7 +29,7 @@ class ValuationPt(object):
 
     def render(self, df):
         @app.callback(Output("valuation1", "figure"), Input("valuation-collapse-0", "active"))
-        def floating_assets_chart(active):
+        def floating_valuation_chart(active):
             print(df)
             fig = px.line(df, x=self.__cols[0], y=self.__cols[1:])
             return fig
