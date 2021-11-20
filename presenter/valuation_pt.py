@@ -24,7 +24,8 @@ class ValuationPt(object):
     def set_layout(self):
         return html.Div([
             html.Div([
-                dbc.Input(id='valuation_input', placeholder="Input goes here...", value='贵州茅台', type="text", style={"width": 200, 'float': 'left'}),
+                dbc.Input(id='valuation_input', placeholder="Input goes here...", value='贵州茅台', type="text",
+                          style={"width": 200, 'float': 'left'}),
                 dbc.Button("Search", color="secondary", id='valuation_button', className="me-1"),
             ]),
             html.Div([
@@ -38,9 +39,22 @@ class ValuationPt(object):
         ])
 
     def render(self, repo):
+        @app.callback(Output("valuation2", "figure"),
+                      [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
+        def roic_chart(n_clicks, value):
+            x = [1, 2, 3, 4]
+
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=x, y=[1, 3, 2, 4]))
+            fig.add_trace(go.Bar(x=x, y=[1, 4, 9, 16]))
+            fig.add_trace(go.Bar(x=x, y=[6, -8, -4.5, -8]))
+
+            fig.update_layout(barmode='relative', title_text='Relative Barmode')
+            return fig
+
         @app.callback(Output("valuation1", "figure"),
                       [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
-        def floating_valuation_chart2(n_clicks, value):
+        def valuation_chart(n_clicks, value):
             df = repo.set_stock_name(value).load().get_data()
             fig = go.Figure(
                 [
