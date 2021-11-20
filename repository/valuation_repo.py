@@ -23,13 +23,14 @@ class ValuationSheet(object):
         return self
 
     def __make_request(self, url):
+        print(url)
         r = requests.get(url, verify=False)
         return r.json()
 
     def __get_stock_id(self):
         obj = self.__make_request(self.__code_url)
         try:
-            self.__stock_id = [v['data']['stockid'] for v in obj if v['data']['exchange'].endswith('SE')][0]
+            self.__stock_id = [v['data']['stockid'] for v in obj if v['data']['exchange'].endswith('SHSE') or v['data']['exchange'].endswith('SZSE')][0]
         except Exception as e:
             print(obj)
             print(e)
@@ -37,7 +38,14 @@ class ValuationSheet(object):
     def __get_valuation(self):
         self.__valuation_url = f'{VALUATION_URL_PREFIX}/{self.__stock_id}/valuation?locale=zh-hans'
         obj = self.__make_request(self.__valuation_url)
-        return obj['medps'], obj['price']
+        medps, price = [], []
+        try:
+            medps, price = obj['medps'], obj['price']
+        except Exception as e:
+            print(obj)
+            print(e)
+
+        return medps, price
 
     def __transform(self, medps, price):
         medps_list = np.array(medps).reshape(-1, 2)

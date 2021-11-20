@@ -74,7 +74,17 @@ class ValuationPt(object):
                         line=dict(color='#6495ED'),
                     )
                 ],
-                layout={"template": "plotly_white"},
+                layout={
+                    "template": "plotly_white",
+                    "title": {
+                        "text": value,
+                        "x": 0.5,
+                        "font": {
+                            "family": "Courier New",
+                            "size": 30,
+                        },
+                    }
+                },
             )
             fig.update_layout(
                 yaxis_title='单位：元',
