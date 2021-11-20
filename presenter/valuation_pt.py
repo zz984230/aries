@@ -3,6 +3,7 @@ from dash.dependencies import Input, Output, State
 import dash_html_components as html
 import dash_core_components as dcc
 import plotly.express as px
+import plotly.graph_objs as go
 import pandas as pd
 
 
@@ -32,7 +33,51 @@ class ValuationPt(object):
     def render(self, repo):
         @app.callback(Output("valuation1", "figure"),
                       [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
-        def floating_valuation_chart(n_clicks, value):
+        def floating_valuation_chart2(n_clicks, value):
             df = repo.set_stock_name(value).load().get_data()
-            fig = px.line(df, x=self.__cols[0], y=self.__cols[1:])
+            fig = go.Figure(
+                [
+                    go.Scatter(
+                        name='Upper Bound',
+                        x=df[self.__cols[0]],
+                        y=df[self.__cols[2]] * 1.3,
+                        mode='lines',
+                        marker=dict(color="#F08080"),
+                        line=dict(width=1),
+                        showlegend=False
+                    ),
+                    go.Scatter(
+                        name='估值',
+                        x=df[self.__cols[0]],
+                        y=df[self.__cols[2]],
+                        mode='lines',
+                        line=dict(color='#696969'),
+                        fillcolor='rgba(255, 228, 225, 0.5)',
+                        fill='tonexty',
+                    ),
+                    go.Scatter(
+                        name='Lower Bound',
+                        x=df[self.__cols[0]],
+                        y=df[self.__cols[2]] * 0.7,
+                        marker=dict(color="#32CD32"),
+                        line=dict(width=1),
+                        mode='lines',
+                        fillcolor='rgba(144, 238, 144, 0.3)',
+                        fill='tonexty',
+                        showlegend=False
+                    ),
+                    go.Scatter(
+                        name='价格',
+                        x=df[self.__cols[0]],
+                        y=df[self.__cols[1]],
+                        mode='lines',
+                        line=dict(color='#6495ED'),
+                    )
+                ],
+                layout={"template": "plotly_white"},
+            )
+            fig.update_layout(
+                yaxis_title='单位：元',
+                hovermode="x"
+            )
             return fig

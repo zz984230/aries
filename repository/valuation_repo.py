@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 import numpy as np
 import os
+from datetime import datetime
 from constants.constant import *
 
 os.environ['NO_PROXY'] = STOCK_DOMAIN
@@ -45,8 +46,13 @@ class ValuationSheet(object):
         price_df = pd.DataFrame(price_list)
         val_df.columns, price_df.columns = [self.__col_name[0], self.__col_name[2]], self.__col_name[:2]
 
-        self.__df = pd.merge(price_df, val_df, on='日期', how='left').fillna(method='ffill').dropna()
+        self.__df = pd.merge(price_df, val_df, on=self.__col_name[0], how='outer')
+        self.__df = self.__df.sort_values(by=[self.__col_name[0]])
+        self.__df[self.__col_name[0]] = pd.to_datetime(self.__df[self.__col_name[0]])
         self.__df[self.__col_name[1:]] = self.__df[self.__col_name[1:]].astype(float)
+        self.__df[self.__col_name[1]] = self.__df[self.__col_name[1]].interpolate()
+        self.__df[self.__col_name[2]] = self.__df[self.__col_name[2]].interpolate()
+        self.__df = self.__df[self.__df[self.__col_name[0]] <= datetime.today()]
 
     def load(self):
         self.__get_stock_id()
@@ -68,5 +74,5 @@ class ValuationSheet(object):
 
 
 if __name__ == '__main__':
-    v = ValuationSheet('SZSE:000651')
+    v = ValuationSheet('贵州茅台')
     v.load()
