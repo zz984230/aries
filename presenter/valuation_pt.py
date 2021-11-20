@@ -2,6 +2,7 @@ from presenter.dash_app import *
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objs as go
 import pandas as pd
@@ -23,10 +24,16 @@ class ValuationPt(object):
     def set_layout(self):
         return html.Div([
             html.Div([
+                dbc.Input(id='valuation_input', placeholder="Input goes here...", value='贵州茅台', type="text", style={"width": 200, 'float': 'left'}),
+                dbc.Button("Search", color="secondary", id='valuation_button', className="me-1"),
+            ]),
+            html.Div([
                 dcc.Markdown(f"### 价格与估值"),
-                dcc.Input(id='valuation_input', value='贵州茅台', type='text'),
-                html.Button('Search', id='valuation_button', n_clicks=0),
                 dcc.Graph(id="valuation1"),
+            ], style=self.__half_left_width_stl),
+            html.Div([
+                dcc.Markdown(f"### ROIC vs WACC"),
+                dcc.Graph(id="valuation2"),
             ], style=self.__half_left_width_stl),
         ])
 
