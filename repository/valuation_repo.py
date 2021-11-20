@@ -1,8 +1,10 @@
 import requests
 import pandas as pd
 import numpy as np
-import json
+import os
 from constants.constant import *
+
+os.environ['NO_PROXY'] = STOCK_DOMAIN
 
 
 class ValuationSheet(object):
@@ -13,6 +15,11 @@ class ValuationSheet(object):
         self.__df = pd.DataFrame()
         self.__stock_id = ""
         self.__col_name = ['日期', '价格', '估值']
+
+    def set_stock_name(self, stock_name):
+        self.__stock_name = stock_name
+        self.__code_url = f'{CODE_URL_PREFIX}&text={stock_name}&type=stock'
+        return self
 
     def __make_request(self, url):
         r = requests.get(url, verify=False)

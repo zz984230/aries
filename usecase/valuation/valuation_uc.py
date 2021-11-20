@@ -4,7 +4,7 @@ from repository.valuation_repo import ValuationSheet
 
 class ValuationUc(object):
     def __init__(self, prt):
-        self.__repo = ValuationSheet('中国平安').load()
+        self.__repo = ValuationSheet('贵州茅台').load()
         self.__prt = prt
         self.__df = pd.DataFrame()
         self.__cols = list()
@@ -24,4 +24,4 @@ class ValuationUc(object):
         self.__get_data()
         self.__deal_data()
         self.__set_layout()
-        self.__prt.render(self.__df)
+        self.__prt.render(self.__repo)
