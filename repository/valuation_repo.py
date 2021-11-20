@@ -11,7 +11,6 @@ os.environ['NO_PROXY'] = STOCK_DOMAIN
 class ValuationSheet(object):
     def __init__(self, stock_name):
         self.__code_url = CODE_URL % stock_name
-        self.__valuation_url = ''
         self.__stock_name = stock_name
         self.__valuation_df = pd.DataFrame()
         self.__roic_df = pd.DataFrame()
@@ -23,22 +22,25 @@ class ValuationSheet(object):
         self.__code_url = CODE_URL % stock_name
         return self
 
-    def __make_request(self, url):
+    def __make_request(self, url, data=None, typ=0):
         print(url)
-        r = requests.get(url, verify=False)
+        if typ:
+            r = requests.post(url, verify=False, data=data)
+        else:
+            r = requests.get(url, verify=False)
         return r.json()
 
     def __get_stock_id(self):
         obj = self.__make_request(self.__code_url)
         try:
-            self.__stock_id = [v['data']['stockid'] for v in obj if v['data']['exchange'].endswith('SHSE') or v['data']['exchange'].endswith('SZSE')][0]
+            self.__stock_id = [v['data']['stockid'] for v in obj if
+                               v['data']['exchange'].endswith('SHSE') or v['data']['exchange'].endswith('SZSE')][0]
         except Exception as e:
             print(obj)
             print(e)
 
     def __get_valuation(self):
-        self.__valuation_url = VALUATION_URL % self.__stock_id
-        obj = self.__make_request(self.__valuation_url)
+        obj = self.__make_request(VALUATION_URL % self.__stock_id)
         medps, price = [], []
         try:
             medps, price = obj['medps'], obj['price']
@@ -49,7 +51,15 @@ class ValuationSheet(object):
         return medps, price
 
     def __get_roic(self):
-        pass
+        objs = self.__make_request(FINANCIAL_URL % self.__stock_id, {"type": "ANNUAL", "start": "2017-01-01", "end": "2021-09-30"}, 1)
+        rs = []
+        try:
+            rs = [(obj['date'], obj['roic'], obj['wacc']) for obj in objs]
+        except Exception as e:
+            print(objs)
+            print(e)
+
+        return rs
 
     def __transform_valuation(self, medps, price):
         medps_list = np.array(medps).reshape(-1, 2)
@@ -66,17 +76,34 @@ class ValuationSheet(object):
         self.__valuation_df[self.__col_name[2]] = self.__valuation_df[self.__col_name[2]].interpolate()
         self.__valuation_df = self.__valuation_df[self.__valuation_df[self.__col_name[0]] <= datetime.today()]
 
+    def __transform_roic(self, rs):
+        self.__roic_df = pd.DataFrame(rs)
+        cols = ['日期', 'ROIC', 'WACC']
+        self.__roic_df.columns = cols
+        self.__roic_df[cols[0]] = pd.to_datetime(self.__roic_df[cols[0]])
+        self.__roic_df[cols[1:]] = self.__roic_df[cols[1:]].astype(float)
+        self.__roic_df['ROIC - WACC'] = self.__roic_df[cols[1]] - self.__roic_df[cols[2]]
+
     def load(self):
         self.__get_stock_id()
         medps, price = self.__get_valuation()
         self.__transform_valuation(medps, price)
+        rs = self.__get_roic()
+        self.__transform_roic(rs)
+
         return self
 
-    def get_data(self, col_name=None):
+    def get_valuation_data(self, col_name=None):
         if col_name is None:
             return self.__valuation_df
 
         return self.__valuation_df[col_name]
+
+    def get_roic_data(self, col_name=None):
+        if col_name is None:
+            return self.__roic_df
+
+        return self.__roic_df[col_name]
 
     def get_column(self) -> list:
         return list(self.__col_name)

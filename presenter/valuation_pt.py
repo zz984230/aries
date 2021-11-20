@@ -12,13 +12,9 @@ class ValuationPt(object):
     def __init__(self):
         self.__half_left_width_stl = dict(width='50%', float='left')
         self.__half_right_width_stl = dict(width='50%', float='right')
-        self.__df = pd.DataFrame()
-        self.__cols = []
         self.__stock_name = ""
 
-    def init_data(self, df, cols, stock_name):
-        self.__df = df
-        self.__cols = cols
+    def init_data(self, stock_name):
         self.__stock_name = stock_name
 
     def set_layout(self):
@@ -42,26 +38,41 @@ class ValuationPt(object):
         @app.callback(Output("valuation2", "figure"),
                       [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
         def roic_chart(n_clicks, value):
-            x = [1, 2, 3, 4]
+            df = repo.set_stock_name(value).load().get_roic_data()
+            cols = list(df.columns)
 
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(x=x, y=[1, 3, 2, 4]))
-            fig.add_trace(go.Bar(x=x, y=[1, 4, 9, 16]))
-            fig.add_trace(go.Bar(x=x, y=[6, -8, -4.5, -8]))
+            fig = go.Figure(
+                layout={
+                    "template": "plotly_white",
+                    "title": {
+                        "text": value,
+                        "x": 0.5,
+                        "font": {
+                            "family": "Courier New",
+                            "size": 30,
+                        },
+                    }
+                },
+            )
+            fig.add_trace(go.Scatter(x=df[cols[0]], y=df[cols[3]], name=cols[3], marker={'color': '#6495ED'}))
+            fig.add_trace(go.Bar(x=df[cols[0]], y=df[cols[1]], name=cols[1], marker={'color': '#F08080'}))
+            fig.add_trace(go.Bar(x=df[cols[0]], y=-df[cols[2]], name=cols[2], marker={'color': '#66CDAA'}))
 
-            fig.update_layout(barmode='relative', title_text='Relative Barmode')
+            fig.update_layout(barmode='relative')
+
             return fig
 
         @app.callback(Output("valuation1", "figure"),
                       [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
         def valuation_chart(n_clicks, value):
-            df = repo.set_stock_name(value).load().get_data()
+            df = repo.set_stock_name(value).load().get_valuation_data()
+            cols = list(df.columns)
             fig = go.Figure(
                 [
                     go.Scatter(
                         name='Upper Bound',
-                        x=df[self.__cols[0]],
-                        y=df[self.__cols[2]] * 1.3,
+                        x=df[cols[0]],
+                        y=df[cols[2]] * 1.3,
                         mode='lines',
                         marker=dict(color="#F08080"),
                         line=dict(width=1),
@@ -69,8 +80,8 @@ class ValuationPt(object):
                     ),
                     go.Scatter(
                         name='估值',
-                        x=df[self.__cols[0]],
-                        y=df[self.__cols[2]],
+                        x=df[cols[0]],
+                        y=df[cols[2]],
                         mode='lines',
                         line=dict(color='#696969'),
                         fillcolor='rgba(255, 228, 225, 0.5)',
@@ -78,8 +89,8 @@ class ValuationPt(object):
                     ),
                     go.Scatter(
                         name='Lower Bound',
-                        x=df[self.__cols[0]],
-                        y=df[self.__cols[2]] * 0.7,
+                        x=df[cols[0]],
+                        y=df[cols[2]] * 0.7,
                         marker=dict(color="#32CD32"),
                         line=dict(width=1),
                         mode='lines',
@@ -89,8 +100,8 @@ class ValuationPt(object):
                     ),
                     go.Scatter(
                         name='价格',
-                        x=df[self.__cols[0]],
-                        y=df[self.__cols[1]],
+                        x=df[cols[0]],
+                        y=df[cols[1]],
                         mode='lines',
                         line=dict(color='#6495ED'),
                     )
