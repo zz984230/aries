@@ -35,13 +35,13 @@ class CloudPt(object):
                       [Input("cloud_button", "n_clicks"), State("cloud_input", "value")])
         def cloud_chart(n_clicks, market_value):
             df = repo.load_cloud().get_cloud_data()
-            cols = list(df.columns)
-            df = df[df[cols[4]] >= market_value]
+            col_sector, col_group, col_company, col_rise_fall, col_market_value, col_color = list(df.columns)
+            df = df[df[col_market_value] >= market_value]
 
             fig = px.treemap(df,
-                             path=[cols[0], cols[1], cols[2]],
-                             values=cols[4],
-                             color=cols[5],
+                             path=[col_sector, col_group, col_company],
+                             values=col_market_value,
+                             color=col_color,
                              color_continuous_midpoint=0.0,
                              color_continuous_scale=self.__color[::-1],
                              maxdepth=3)
