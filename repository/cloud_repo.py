@@ -14,7 +14,7 @@ class CloudSheet(Repo):
     def __init__(self, cloud_data_path=os.path.join(os.path.abspath('.'), 'data', 'cloud')):
         super(CloudSheet, self).__init__()
         self.__df = pd.DataFrame()
-        self.__cols = ['sector', 'group', 'company', 'pchange_1w', 'mktcap_norm_cny']
+        self.__cols = ['行业', '行业细分', '公司', '涨跌幅', '市值']
         self.__json_req = json.loads(ClOUD_POST_JSON)
         self.__data_path = os.path.join(cloud_data_path, f'{datetime.today().strftime("%Y-%m-%d")}.csv')
 
@@ -30,7 +30,7 @@ class CloudSheet(Repo):
             total = objs['total']
             tmp = []
             try:
-                tmp = [(obj[self.__cols[0]], obj[self.__cols[1]], obj[self.__cols[2]], obj[self.__cols[3]], obj[self.__cols[4]]) for obj in objs['data']]
+                tmp = [(obj['sector'], obj['group'], obj['company'], obj['p_pct_change'], obj['mktcap_norm_cny']) for obj in objs['data']]
             except Exception as e:
                 print(objs)
                 print(e)
@@ -44,9 +44,9 @@ class CloudSheet(Repo):
         self.__df = pd.DataFrame(rs_list)
         self.__df.columns = self.__cols
         self.__df[self.__cols[3:]] = self.__df[self.__cols[3:]].astype(float)
-        self.__df['color'] = self.__df[self.__cols[3]]
-        self.__df['color'][self.__df['color'] > 10] = 10
-        self.__df['color'][self.__df['color'] < -10] = -10
+        # self.__df['color'] = self.__df[self.__cols[3]]
+        # self.__df['color'][self.__df['color'] > 10] = 10
+        # self.__df['color'][self.__df['color'] < -10] = -10
 
     def __save_cloud(self):
         self.__df.to_csv(self.__data_path, index=False)
@@ -55,9 +55,9 @@ class CloudSheet(Repo):
         if os.path.exists(self.__data_path):
             self.__df = pd.read_csv(self.__data_path)
             self.__df[self.__cols[3:]] = self.__df[self.__cols[3:]].astype(float)
-            self.__df['color'] = self.__df[self.__cols[3]]
-            self.__df['color'][self.__df['color'] > 10] = 10
-            self.__df['color'][self.__df['color'] < -10] = -10
+            # self.__df['color'] = self.__df[self.__cols[3]]
+            # self.__df['color'][self.__df['color'] > 10] = 10
+            # self.__df['color'][self.__df['color'] < -10] = -10
             return self
 
         self.__transform_cloud(self.__get_cloud())

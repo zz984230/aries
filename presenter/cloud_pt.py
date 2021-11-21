@@ -5,21 +5,29 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objs as go
+import pandas as pd
+import numpy as np
 
 
 class CloudPt(object):
     def __init__(self):
+        # self.__color = [
+        #     '#ff7575',
+        #     '#FF9797',
+        #     '#FFB5B5',
+        #     '#FFD2D2',
+        #     '#FFECEC',
+        #     '#D1E9E9',
+        #     '#C4E1E1',
+        #     '#B3D9D9',
+        #     '#A3D1D1',
+        #     '#95CACA']
         self.__color = [
+            '#FF2D2D',
             '#ff7575',
-            '#FF9797',
-            '#FFB5B5',
-            '#FFD2D2',
-            '#FFECEC',
-            '#D1E9E9',
-            '#C4E1E1',
-            '#B3D9D9',
-            '#A3D1D1',
-            '#95CACA']
+            '#FFFFFF',
+            '#95CACA',
+            '#6FB7B7']
 
     def set_layout(self):
         return html.Div([
@@ -35,16 +43,20 @@ class CloudPt(object):
                       [Input("cloud_button", "n_clicks"), State("cloud_input", "value")])
         def cloud_chart(n_clicks, market_value):
             df = repo.load_cloud().get_cloud_data()
-            col_sector, col_group, col_company, col_rise_fall, col_market_value, col_color = list(df.columns)
+            col_sector, col_group, col_company, col_rise_fall, col_market_value = list(df.columns)
             df = df[df[col_market_value] >= market_value]
 
             fig = px.treemap(df,
                              path=[col_sector, col_group, col_company],
                              values=col_market_value,
-                             color=col_color,
+                             labels=col_company,
+                             color=col_rise_fall,
                              color_continuous_midpoint=0.0,
                              color_continuous_scale=self.__color[::-1],
                              maxdepth=3)
+            fig.update_traces(textfont=dict(size=15),
+                              texttemplate='%{label}<br>%{customdata:.2f}%',
+                              textposition='middle center')
             fig.update_layout(
                 margin=dict(t=50, l=25, r=25, b=25),
                 width=1600,
