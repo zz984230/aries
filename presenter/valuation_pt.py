@@ -12,10 +12,6 @@ class ValuationPt(object):
     def __init__(self):
         self.__half_left_width_stl = dict(width='50%', float='left')
         self.__half_right_width_stl = dict(width='50%', float='right')
-        self.__stock_name = ""
-
-    def init_data(self, stock_name):
-        self.__stock_name = stock_name
 
     def set_layout(self):
         return html.Div([
@@ -38,7 +34,7 @@ class ValuationPt(object):
         @app.callback(Output("valuation2", "figure"),
                       [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
         def roic_chart(n_clicks, value):
-            df = repo.set_stock_name(value).load().get_roic_data()
+            df = repo.set_stock_name(value).load_roic().get_roic_data()
             cols = list(df.columns)
 
             fig = go.Figure(
@@ -65,7 +61,7 @@ class ValuationPt(object):
         @app.callback(Output("valuation1", "figure"),
                       [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
         def valuation_chart(n_clicks, value):
-            df = repo.set_stock_name(value).load().get_valuation_data()
+            df = repo.set_stock_name(value).load_valuation().get_valuation_data()
             cols = list(df.columns)
             fig = go.Figure(
                 [

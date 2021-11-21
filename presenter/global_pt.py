@@ -84,6 +84,7 @@ class GlobalPt(object):
             ],
             [
                 dbc.Button("股票估值", id="valuation-collapse-0", block=True),
+                dbc.Button("大盘云图", id="valuation-collapse-1", block=True),
             ]
         ]
 

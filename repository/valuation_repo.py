@@ -11,14 +11,12 @@ os.environ['NO_PROXY'] = STOCK_DOMAIN
 class ValuationSheet(object):
     def __init__(self, stock_name):
         self.__code_url = CODE_URL % stock_name
-        self.__stock_name = stock_name
         self.__valuation_df = pd.DataFrame()
         self.__roic_df = pd.DataFrame()
         self.__stock_id = ""
         self.__col_name = ['日期', '价格', '估值']
 
     def set_stock_name(self, stock_name):
-        self.__stock_name = stock_name
         self.__code_url = CODE_URL % stock_name
         return self
 
@@ -84,10 +82,15 @@ class ValuationSheet(object):
         self.__roic_df[cols[1:]] = self.__roic_df[cols[1:]].astype(float)
         self.__roic_df['ROIC - WACC'] = self.__roic_df[cols[1]] - self.__roic_df[cols[2]]
 
-    def load(self):
+    def load_valuation(self):
         self.__get_stock_id()
         medps, price = self.__get_valuation()
         self.__transform_valuation(medps, price)
+
+        return self
+
+    def load_roic(self):
+        self.__get_stock_id()
         rs = self.__get_roic()
         self.__transform_roic(rs)
 
@@ -107,11 +110,3 @@ class ValuationSheet(object):
 
     def get_column(self) -> list:
         return list(self.__col_name)
-
-    def get_stock(self) -> str:
-        return self.__stock_name
-
-
-if __name__ == '__main__':
-    v = ValuationSheet('贵州茅台')
-    v.load()
