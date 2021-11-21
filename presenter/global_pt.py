@@ -7,13 +7,15 @@ import dash_html_components as html
 
 
 class GlobalPt(object):
-    def __init__(self, logo_file, bg_file, balance_pt, valuation_pt):
+    def __init__(self, logo_file, bg_file, balance_pt, valuation_pt, cloud_pt):
         self.__logo_file = logo_file
         self.__bg_file = bg_file
-        self.__labels = ['资产负债表', '利润表', '现金流量表', '估值计算']
+        self.__labels = ['资产负债表', '利润表', '现金流量表', '价值投资']
+        self.__button_group = []
         self.__clicked_button_id = ""
         self.__balance_pt = balance_pt
         self.__valuation_pt = valuation_pt
+        self.__cloud_pt = cloud_pt
 
     def __init_layout(self):
         self.__left_layout = dbc.Col(id='left_layout', xs=1, style=dict(background=GAINSBORO))
@@ -64,7 +66,7 @@ class GlobalPt(object):
         )
 
     def set_left_layout(self):
-        button_group = [
+        self.__button_group = [
             [
                 dbc.Button("资产", id="balance-collapse-0", block=True),
                 dbc.Button("负债", id="balance-collapse-1", block=True),
@@ -90,7 +92,7 @@ class GlobalPt(object):
 
         self.__left_layout.children = [
             self.__set_each_left_layout(i, dbc.ButtonGroup(
-                button_group[i],
+                self.__button_group[i],
                 vertical=True,
                 style={"width": "inherit"}
             )) for i in range(len(self.__labels))
@@ -105,8 +107,10 @@ class GlobalPt(object):
 
     def render(self):
         @app.callback(Output("right_layout", "children"),
-                      [Input("balance-collapse-0", "active"), Input("valuation-collapse-0", "active")])
-        def set_score_layout(kind_active, score_active):
+                      [Input("balance-collapse-0", "active"),
+                       Input("valuation-collapse-0", "active"),
+                       Input("valuation-collapse-1", "active")])
+        def set_score_layout(kind_active, valuation_active, cloud_active):
             ctx = dash.callback_context
             if not ctx.triggered:
                 return self.__right_layout.children
@@ -115,13 +119,16 @@ class GlobalPt(object):
 
             if kind_active and button_id.startswith("balance-collapse"):
                 return self.__balance_pt.set_layout()
-            elif score_active and button_id.startswith("valuation-collapse"):
-                return self.__valuation_pt.set_layout()
+            elif button_id.startswith("valuation-collapse-0"):
+                if valuation_active:
+                    return self.__valuation_pt.set_layout()
+                elif cloud_active:
+                    return self.__cloud_pt.set_layout()
 
             return self.__right_layout.children
 
-        @app.callback([Output(f"valuation-collapse-{i}", "active") for i in range(1)],
-                      [Input(f"valuation-collapse-{i}", "n_clicks") for i in range(1)])
+        @app.callback([Output(f"valuation-collapse-{i}", "active") for i in range(len(self.__button_group[3]))],
+                      [Input(f"valuation-collapse-{i}", "n_clicks") for i in range(len(self.__button_group[3]))])
         def valuation_button_click(*args):
             ctx = dash.callback_context
             if not ctx.triggered:
@@ -136,8 +143,8 @@ class GlobalPt(object):
 
             return [True if index == i else False for i in range(len(args))]
 
-        @app.callback([Output(f"balance-collapse-{i}", "active") for i in range(3)],
-                      [Input(f"balance-collapse-{i}", "n_clicks") for i in range(3)])
+        @app.callback([Output(f"balance-collapse-{i}", "active") for i in range(len(self.__button_group[0]))],
+                      [Input(f"balance-collapse-{i}", "n_clicks") for i in range(len(self.__button_group[0]))])
         def balance_button_click(*args):
             ctx = dash.callback_context
             if not ctx.triggered:
