@@ -1,15 +1,16 @@
-import requests
 import pandas as pd
 import numpy as np
 import os
+from repository.repo import Repo
 from datetime import datetime
 from constants.constant import *
 
 os.environ['NO_PROXY'] = STOCK_DOMAIN
 
 
-class ValuationSheet(object):
+class ValuationSheet(Repo):
     def __init__(self, stock_name):
+        super(ValuationSheet, self).__init__()
         self.__code_url = CODE_URL % stock_name
         self.__valuation_df = pd.DataFrame()
         self.__roic_df = pd.DataFrame()
@@ -20,16 +21,8 @@ class ValuationSheet(object):
         self.__code_url = CODE_URL % stock_name
         return self
 
-    def __make_request(self, url, data=None, typ=0):
-        print(url)
-        if typ:
-            r = requests.post(url, verify=False, data=data)
-        else:
-            r = requests.get(url, verify=False)
-        return r.json()
-
     def __get_stock_id(self):
-        obj = self.__make_request(self.__code_url)
+        obj = self._make_request(self.__code_url)
         try:
             self.__stock_id = [v['data']['stockid'] for v in obj if
                                v['data']['exchange'].endswith('SHSE') or v['data']['exchange'].endswith('SZSE')][0]
@@ -38,7 +31,7 @@ class ValuationSheet(object):
             print(e)
 
     def __get_valuation(self):
-        obj = self.__make_request(VALUATION_URL % self.__stock_id)
+        obj = self._make_request(VALUATION_URL % self.__stock_id)
         medps, price = [], []
         try:
             medps, price = obj['medps'], obj['price']
@@ -49,7 +42,8 @@ class ValuationSheet(object):
         return medps, price
 
     def __get_roic(self):
-        objs = self.__make_request(FINANCIAL_URL % self.__stock_id, {"type": "ANNUAL", "start": "2017-01-01", "end": "2021-09-30"}, 1)
+        objs = self._make_request(FINANCIAL_URL % self.__stock_id,
+                                   {"type": "ANNUAL", "start": "2017-01-01", "end": "2021-09-30"}, 1)
         rs = []
         try:
             rs = [(obj['date'], obj['roic'], obj['wacc']) for obj in objs]
@@ -107,6 +101,3 @@ class ValuationSheet(object):
             return self.__roic_df
 
         return self.__roic_df[col_name]
-
-    def get_column(self) -> list:
-        return list(self.__col_name)
