@@ -4,24 +4,10 @@ import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import plotly.express as px
-import plotly.graph_objs as go
-import pandas as pd
-import numpy as np
 
 
 class CloudPt(object):
     def __init__(self):
-        # self.__color = [
-        #     '#ff7575',
-        #     '#FF9797',
-        #     '#FFB5B5',
-        #     '#FFD2D2',
-        #     '#FFECEC',
-        #     '#D1E9E9',
-        #     '#C4E1E1',
-        #     '#B3D9D9',
-        #     '#A3D1D1',
-        #     '#95CACA']
         self.__color = [
             '#FF2D2D',
             '#ff7575',
