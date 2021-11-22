@@ -45,7 +45,7 @@ class ValuationSheet(Repo):
         objs = self._make_request(FINANCIAL_URL % self.__stock_id, json_data={"type": "ANNUAL"}, typ=1)
         rs = []
         try:
-            rs = [(obj['date'], obj['roic'], obj['wacc']) for obj in objs]
+            rs = [(obj['date'], obj['roic'], obj['wacc'], obj['roe']) for obj in objs]
         except Exception as e:
             print(objs)
             print(e)
@@ -69,7 +69,7 @@ class ValuationSheet(Repo):
 
     def __transform_roic(self, rs):
         self.__roic_df = pd.DataFrame(rs)
-        cols = ['日期', 'ROIC', 'WACC']
+        cols = ['日期', 'ROIC', 'WACC', 'ROE']
         self.__roic_df.columns = cols
         self.__roic_df[cols[0]] = pd.to_datetime(self.__roic_df[cols[0]])
         self.__roic_df[cols[1:]] = self.__roic_df[cols[1:]].astype(float)

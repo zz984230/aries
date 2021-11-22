@@ -26,10 +26,14 @@ class ValuationPt(object):
                 dcc.Markdown(f"### ROIC vs WACC"),
                 dcc.Graph(id="valuation2"),
             ], style=self.__half_left_width_stl),
+            html.Div([
+                dcc.Markdown(f"### ROE"),
+                dcc.Graph(id="valuation3"),
+            ], style=self.__half_left_width_stl),
         ])
 
     def render(self, repo):
-        @app.callback(Output("valuation2", "figure"),
+        @app.callback([Output("valuation2", "figure"), Output("valuation3", "figure")],
                       [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
         def roic_chart(n_clicks, value):
             df = repo.set_stock_name(value).load_roic().get_roic_data()
@@ -48,13 +52,28 @@ class ValuationPt(object):
                     }
                 },
             )
-            fig.add_trace(go.Scatter(x=df[cols[0]], y=df[cols[3]], name=cols[3], marker={'color': '#6495ED'}))
+            fig.add_trace(go.Scatter(x=df[cols[0]], y=df[cols[-1]], name=cols[-1], marker={'color': '#6495ED'}))
             fig.add_trace(go.Bar(x=df[cols[0]], y=df[cols[1]], name=cols[1], marker={'color': '#F08080'}))
             fig.add_trace(go.Bar(x=df[cols[0]], y=-df[cols[2]], name=cols[2], marker={'color': '#66CDAA'}))
 
             fig.update_layout(barmode='relative')
 
-            return fig
+            fig2 = go.Figure(
+                layout={
+                    "template": "plotly_white",
+                    "title": {
+                        "text": value,
+                        "x": 0.5,
+                        "font": {
+                            "family": "Courier New",
+                            "size": 30,
+                        },
+                    }
+                },
+            )
+            fig2.add_trace(go.Bar(x=df[cols[0]], y=df[cols[3]], name=cols[3], marker={'color': '#F08080'}))
+
+            return fig, fig2
 
         @app.callback(Output("valuation1", "figure"),
                       [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
