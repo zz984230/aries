@@ -42,8 +42,7 @@ class ValuationSheet(Repo):
         return medps, price
 
     def __get_roic(self):
-        objs = self._make_request(FINANCIAL_URL % self.__stock_id,
-                                   {"type": "ANNUAL", "start": "2017-01-01", "end": "2021-09-30"}, 1)
+        objs = self._make_request(FINANCIAL_URL % self.__stock_id, json_data={"type": "ANNUAL"}, typ=1)
         rs = []
         try:
             rs = [(obj['date'], obj['roic'], obj['wacc']) for obj in objs]
