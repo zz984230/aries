@@ -17,6 +17,8 @@ class ValuationPt(object):
                 dbc.Input(id='valuation_input', placeholder="Input goes here...", value='贵州茅台', type="text",
                           style={"width": 200, 'float': 'left'}),
                 dbc.Button("Search", color="secondary", id='valuation_button', className="me-1"),
+                dcc.Markdown(f"### 公司简介："),
+                dcc.Markdown(id="markdown1"),
             ]),
             html.Div([
                 dcc.Markdown(f"### 价格与估值"),
@@ -33,6 +35,12 @@ class ValuationPt(object):
         ])
 
     def render(self, repo):
+        @app.callback(Output("markdown1", "children"),
+                      [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
+        def company_description(n_clicks, value):
+            description = repo.set_stock_name(value).load_company_info().get_company_data()
+            return f'{description}'
+
         @app.callback([Output("valuation2", "figure"), Output("valuation3", "figure")],
                       [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
         def roic_chart(n_clicks, value):

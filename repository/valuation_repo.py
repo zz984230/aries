@@ -16,6 +16,7 @@ class ValuationSheet(Repo):
         self.__roic_df = pd.DataFrame()
         self.__stock_id = ""
         self.__col_name = ['日期', '价格', '估值']
+        self.__company_description = ""
 
     def set_stock_name(self, stock_name):
         self.__code_url = CODE_URL % stock_name
@@ -51,6 +52,10 @@ class ValuationSheet(Repo):
             print(e)
 
         return rs
+
+    def __get_company_info(self):
+        obj = self._make_request(COMPANY_INFO_URL % self.__stock_id)
+        self.__company_description = obj['business_descrpt']['descrpt']
 
     def __transform_valuation(self, medps, price):
         medps_list = np.array(medps).reshape(-1, 2)
@@ -89,6 +94,12 @@ class ValuationSheet(Repo):
 
         return self
 
+    def load_company_info(self):
+        self.__get_stock_id()
+        self.__get_company_info()
+
+        return self
+
     def get_valuation_data(self, col_name=None):
         if col_name is None:
             return self.__valuation_df
@@ -100,3 +111,6 @@ class ValuationSheet(Repo):
             return self.__roic_df
 
         return self.__roic_df[col_name]
+
+    def get_company_data(self):
+        return self.__company_description
