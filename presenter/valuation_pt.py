@@ -77,7 +77,7 @@ class ValuationPt(object):
                     }
                 },
             )
-            fig.add_trace(go.Scatter(x=df[cols[0]], y=df[cols[-1]], name=cols[-1], marker={'color': '#6495ED'}))
+            fig.add_trace(go.Scatter(x=df[cols[0]], y=df[cols[-1]], name=cols[-1], mode='lines+markers', marker={'color': '#6495ED'}))
             fig.add_trace(go.Bar(x=df[cols[0]], y=df[cols[1]], name=cols[1], marker={'color': '#F08080'}))
             fig.add_trace(go.Bar(x=df[cols[0]], y=-df[cols[2]], name=cols[2], marker={'color': '#66CDAA'}))
 
