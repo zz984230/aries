@@ -33,7 +33,7 @@ class ValuationPt(object):
                 dcc.Graph(id="valuation3"),
             ], style=self.__half_left_width_stl),
             html.Div([
-                dcc.Markdown(f"### 扣非每股收益"),
+                dcc.Markdown(f"### 每股收益与自由现金流"),
                 dcc.Graph(id="valuation4"),
             ], style=self.__half_right_width_stl),
         ])
@@ -77,7 +77,7 @@ class ValuationPt(object):
                     }
                 },
             )
-            fig.add_trace(go.Scatter(x=df[cols[0]], y=df[cols[-1]], name=cols[-1], mode='lines+markers', marker={'color': '#6495ED'}))
+            fig.add_trace(go.Scatter(x=df[cols[0]], y=df[cols[1]] - df[cols[2]], name='ROIC - WACC', mode='lines+markers', marker={'color': '#6495ED'}))
             fig.add_trace(go.Bar(x=df[cols[0]], y=df[cols[1]], name=cols[1], marker={'color': '#F08080'}))
             fig.add_trace(go.Bar(x=df[cols[0]], y=-df[cols[2]], name=cols[2], marker={'color': '#66CDAA'}))
 
@@ -89,11 +89,22 @@ class ValuationPt(object):
             fig = go.Figure(
                 [
                     go.Scatter(
-                        name='收益',
+                        name='扣非每股收益',
                         x=df[cols[0]],
                         y=df[cols[4]],
                         mode='lines+markers',
-                        line=dict(color='#6495ED'),
+                    ),
+                    go.Scatter(
+                        name='每股自由现金流',
+                        x=df[cols[0]],
+                        y=df[cols[5]],
+                        mode='lines+markers',
+                    ),
+                    go.Scatter(
+                        name='基本每股收益',
+                        x=df[cols[0]],
+                        y=df[cols[6]],
+                        mode='lines+markers',
                     )
                 ],
                 layout={

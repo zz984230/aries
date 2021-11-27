@@ -14,7 +14,7 @@ VALUATION_URL = f'https://{STOCK_DOMAIN}/_api/chart/%s/valuation?locale=zh-hans'
 
 # 投资回报率、净资产收益率、加权平均资本成本、扣非每股收益等指标
 # https://www.gurufocus.cn/_api/stock/CN0138/financial/items/cash_equivalents_marketable_securities,cash_flow_from_operations,net_income,revenue,total_debt,total_free_cash_flow,net_income_from_continuing_operations,dividends,roic,roe,wacc?locale=zh-hans
-FINANCIAL_URL = f'https://{STOCK_DOMAIN}/_api/stock/%s/financial/items/roic,roe,wacc,eps_without_nri?locale=zh-hans'
+FINANCIAL_URL = f'https://{STOCK_DOMAIN}/_api/stock/%s/financial/items/roic,roe,wacc,eps_without_nri,free_cash_flow_per_share,eps_basic?locale=zh-hans'
 
 # 大盘云图
 CLOUD_URL = f'https://{STOCK_DOMAIN}/_api/screener?locale=zh-hans'
