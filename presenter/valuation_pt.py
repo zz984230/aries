@@ -27,11 +27,15 @@ class ValuationPt(object):
             html.Div([
                 dcc.Markdown(f"### ROIC vs WACC"),
                 dcc.Graph(id="valuation2"),
-            ], style=self.__half_left_width_stl),
+            ], style=self.__half_right_width_stl),
             html.Div([
                 dcc.Markdown(f"### ROE"),
                 dcc.Graph(id="valuation3"),
             ], style=self.__half_left_width_stl),
+            html.Div([
+                dcc.Markdown(f"### 扣非每股收益"),
+                dcc.Graph(id="valuation4"),
+            ], style=self.__half_right_width_stl),
         ])
 
     def render(self, repo):
@@ -41,12 +45,25 @@ class ValuationPt(object):
             description = repo.set_stock_name(value).load_company_info().get_company_data()
             return f'{description}'
 
-        @app.callback([Output("valuation2", "figure"), Output("valuation3", "figure")],
-                      [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
-        def roic_chart(n_clicks, value):
-            df = repo.set_stock_name(value).load_roic().get_roic_data()
-            cols = list(df.columns)
+        def __chart_roe(df, cols, value):
+            fig = go.Figure(
+                layout={
+                    "template": "plotly_white",
+                    "title": {
+                        "text": value,
+                        "x": 0.5,
+                        "font": {
+                            "family": "Courier New",
+                            "size": 30,
+                        },
+                    }
+                },
+            )
+            fig.add_trace(go.Bar(x=df[cols[0]], y=df[cols[3]], name=cols[3], marker={'color': '#F08080'}))
 
+            return fig
+
+        def __chart_roic(df, cols, value):
             fig = go.Figure(
                 layout={
                     "template": "plotly_white",
@@ -66,7 +83,19 @@ class ValuationPt(object):
 
             fig.update_layout(barmode='relative')
 
-            fig2 = go.Figure(
+            return fig
+
+        def __chart_earnings(df, cols,  value):
+            fig = go.Figure(
+                [
+                    go.Scatter(
+                        name='收益',
+                        x=df[cols[0]],
+                        y=df[cols[4]],
+                        mode='lines+markers',
+                        line=dict(color='#6495ED'),
+                    )
+                ],
                 layout={
                     "template": "plotly_white",
                     "title": {
@@ -79,9 +108,19 @@ class ValuationPt(object):
                     }
                 },
             )
-            fig2.add_trace(go.Bar(x=df[cols[0]], y=df[cols[3]], name=cols[3], marker={'color': '#F08080'}))
+            fig.update_layout(
+                yaxis_title='单位：元',
+                hovermode="x"
+            )
+            return fig
 
-            return fig, fig2
+        @app.callback([Output("valuation2", "figure"), Output("valuation3", "figure"), Output("valuation4", "figure")],
+                      [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
+        def roic_chart(n_clicks, value):
+            df = repo.set_stock_name(value).load_roic().get_roic_data()
+            cols = list(df.columns)
+
+            return __chart_roic(df, cols, value), __chart_roe(df, cols, value), __chart_earnings(df, cols, value)
 
         @app.callback(Output("valuation1", "figure"),
                       [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
@@ -144,3 +183,36 @@ class ValuationPt(object):
                 hovermode="x"
             )
             return fig
+
+        # @app.callback(Output("valuation4", "figure"),
+        #               [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
+        # def earnings_chart(n_clicks, value):
+        #     df = repo.set_stock_name(value).load_earnings().get_earnings()
+        #     cols = list(df.columns)
+        #     fig = go.Figure(
+        #         [
+        #             go.Scatter(
+        #                 name='收益',
+        #                 x=df[cols[0]],
+        #                 y=df[cols[1]],
+        #                 mode='lines+markers',
+        #                 line=dict(color='#6495ED'),
+        #             )
+        #         ],
+        #         layout={
+        #             "template": "plotly_white",
+        #             "title": {
+        #                 "text": value,
+        #                 "x": 0.5,
+        #                 "font": {
+        #                     "family": "Courier New",
+        #                     "size": 30,
+        #                 },
+        #             }
+        #         },
+        #     )
+        #     fig.update_layout(
+        #         yaxis_title='单位：元',
+        #         hovermode="x"
+        #     )
+        #     return fig
