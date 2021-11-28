@@ -29,7 +29,7 @@ class ValuationPt(object):
                 dcc.Graph(id="valuation2"),
             ], style=self.__half_right_width_stl),
             html.Div([
-                dcc.Markdown(f"### ROE"),
+                dcc.Markdown(f"### ROE vs ROA"),
                 dcc.Graph(id="valuation3"),
             ], style=self.__half_left_width_stl),
             html.Div([
@@ -45,7 +45,7 @@ class ValuationPt(object):
             description = repo.set_stock_name(value).load_company_info().get_company_data()
             return f'{description}'
 
-        def __chart_roe(df, cols, value):
+        def __chart_roe_roa(df, cols, value):
             fig = go.Figure(
                 layout={
                     "template": "plotly_white",
@@ -60,6 +60,7 @@ class ValuationPt(object):
                 },
             )
             fig.add_trace(go.Bar(x=df[cols[0]], y=df[cols[3]], name=cols[3], marker={'color': '#F08080'}))
+            fig.add_trace(go.Bar(x=df[cols[0]], y=df[cols[7]], name=cols[7], marker={'color': '#66CDAA'}))
 
             return fig
 
@@ -131,7 +132,7 @@ class ValuationPt(object):
             df = repo.set_stock_name(value).load_roic().get_roic_data()
             cols = list(df.columns)
 
-            return __chart_roic(df, cols, value), __chart_roe(df, cols, value), __chart_earnings(df, cols, value)
+            return __chart_roic(df, cols, value), __chart_roe_roa(df, cols, value), __chart_earnings(df, cols, value)
 
         @app.callback(Output("valuation1", "figure"),
                       [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])

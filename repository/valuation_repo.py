@@ -54,7 +54,8 @@ class ValuationSheet(Repo):
                 eps_without_nri = obj.get('eps_without_nri', 0.0)
                 free_cash_flow_per_share = obj.get('free_cash_flow_per_share', 0.0)
                 eps_basic = obj.get('eps_basic', 0.0)
-                rs.append([d, roic, wacc, roe, eps_without_nri, free_cash_flow_per_share, eps_basic])
+                roa = obj.get('roa', 0.0)
+                rs.append([d, roic, wacc, roe, eps_without_nri, free_cash_flow_per_share, eps_basic, roa])
         except Exception as e:
             print(objs)
             print(e)
@@ -82,7 +83,7 @@ class ValuationSheet(Repo):
 
     def __transform_roic(self, rs):
         self.__roic_df = pd.DataFrame(rs)
-        cols = ['日期', 'ROIC', 'WACC', 'ROE', '扣非每股收益', '每股自由现金流', '基本每股收益']
+        cols = ['日期', 'ROIC', 'WACC', 'ROE', '扣非每股收益', '每股自由现金流', '基本每股收益', 'ROA']
         self.__roic_df.columns = cols
         self.__roic_df[cols[0]] = pd.to_datetime(self.__roic_df[cols[0]])
         self.__roic_df[cols[1:]] = self.__roic_df[cols[1:]].astype(float)
