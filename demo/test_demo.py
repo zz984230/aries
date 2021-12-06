@@ -57,7 +57,7 @@ def get_table_data(table):
                     each.extend(t[1])
                 else:
                     d = td.get_text(strip=True)
-                    each.append(d if '--' not in d else '999')
+                    each.append(d if '--' not in d else each[-1])
             tmp.append(each[0])
             tmp.extend(each[-5:])
             rs.append(tmp)
