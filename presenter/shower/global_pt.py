@@ -1,4 +1,4 @@
-from presenter.dash_app import *
+from presenter.shower.dash_app import *
 from constants.colors import *
 from dash.dependencies import Input, Output
 import dash
