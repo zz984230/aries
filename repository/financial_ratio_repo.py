@@ -55,16 +55,20 @@ class FinancialRatio(Repo):
     def load_financial(self):
         self.__get_stock_symbol()
 
-        r = requests.get(FINANCIAL_RATIO_URL % self.__stock_symbol, verify=False, proxies=self.__proxies)
-        soup = BeautifulSoup(r.text, 'lxml')
-        t = soup.find(id='albs-yearly').find('table')
-        col = [th.get_text() for k, th in enumerate(t.find_all('th')[:7]) if k != 1]
-        col[-1] = '近12个月'
-        table_one = self.__get_financial_table_data(t)
-        table_two = self.__get_financial_table_data(soup.find(id='alkey-yearly').find('table'))
-        table_one.extend(table_two)
-        self.__df = pd.DataFrame(table_one, columns=col)
-        self.__df[col[1:]] = self.__df[col[1:]].applymap(lambda x: x.replace(',', '')).astype(float)
+        try:
+            r = requests.get(FINANCIAL_RATIO_URL % self.__stock_symbol, verify=False, proxies=self.__proxies)
+            soup = BeautifulSoup(r.text, 'lxml')
+            t = soup.find(id='albs-yearly').find('table')
+            col = [th.get_text() for k, th in enumerate(t.find_all('th')[:7]) if k != 1]
+            col[-1] = '近12个月'
+            table_one = self.__get_financial_table_data(t)
+            table_two = self.__get_financial_table_data(soup.find(id='alkey-yearly').find('table'))
+            table_one.extend(table_two)
+            self.__df = pd.DataFrame(table_one, columns=col)
+            self.__df[col[1:]] = self.__df[col[1:]].applymap(lambda x: x.replace(',', '')).astype(float)
+        except Exception as e:
+            print(e)
+            print(self.__df)
 
         return self
 

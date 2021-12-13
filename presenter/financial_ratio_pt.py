@@ -8,7 +8,6 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 
-
 pd.set_option('display.max_columns', None)
 
 
@@ -61,13 +60,20 @@ class FinancialRatioPt(object):
         @app.callback(Output('financial_tabs', 'children'),
                       [Input("financial_ratio_button", "n_clicks"), State("financial_ratio_input", "value")])
         def financial_ratio_tabs(n_clicks, value):
-            df = repo.set_stock_name(value).load_financial().get_financial_data()
-            cols = list(df.columns)
-            df = cal_financial_ratio_detail_score(df)
-            print(df)
-            df_group_by_type = cal_financial_ratio_score(df)
-            print()
-            print(df_group_by_type)
-            return [dcc.Tab(label=v, value=f'tab-{k}', children=[
-                dcc.Graph(figure=px.line_polar(r=list(df_group_by_type[f'{v}_score']), theta=self.__theta, range_r=[0, 100], line_close=True)),
-            ]) for k, v in enumerate(cols[1:6])]
+            try:
+                ori_df = repo.set_stock_name(value).load_financial().get_financial_data()
+                cols = list(ori_df.columns)
+                print(ori_df)
+                df = cal_financial_ratio_detail_score(ori_df)
+                print(df)
+                df_group_by_type = cal_financial_ratio_score(df)
+                print()
+                print(df_group_by_type)
+                children = [dcc.Tab(label=v, value=f'tab-{k}', children=[
+                    dcc.Graph(figure=px.line_polar(r=list(df_group_by_type[f'{v}_score']), theta=self.__theta,
+                                                   range_r=[0, 100], line_close=True)),
+                ]) for k, v in enumerate(cols[1:6])]
+            except Exception as e:
+                print(e)
+                print(ori_df)
+            return children
