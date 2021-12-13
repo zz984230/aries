@@ -44,9 +44,6 @@ class CloudSheet(Repo):
         self.__df = pd.DataFrame(rs_list)
         self.__df.columns = self.__cols
         self.__df[self.__cols[3:]] = self.__df[self.__cols[3:]].astype(float)
-        # self.__df['color'] = self.__df[self.__cols[3]]
-        # self.__df['color'][self.__df['color'] > 10] = 10
-        # self.__df['color'][self.__df['color'] < -10] = -10
 
     def __save_cloud(self):
         self.__df.to_csv(self.__data_path, index=False)
@@ -55,9 +52,6 @@ class CloudSheet(Repo):
         if os.path.exists(self.__data_path):
             self.__df = pd.read_csv(self.__data_path)
             self.__df[self.__cols[3:]] = self.__df[self.__cols[3:]].astype(float)
-            # self.__df['color'] = self.__df[self.__cols[3]]
-            # self.__df['color'][self.__df['color'] > 10] = 10
-            # self.__df['color'][self.__df['color'] < -10] = -10
             return self
 
         self.__transform_cloud(self.__get_cloud())

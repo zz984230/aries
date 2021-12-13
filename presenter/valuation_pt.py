@@ -1,4 +1,4 @@
-from presenter.shower.dash_app import *
+from presenter.dash_app import *
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 import dash_core_components as dcc
@@ -195,36 +195,3 @@ class ValuationPt(object):
                 hovermode="x"
             )
             return fig
-
-        # @app.callback(Output("valuation4", "figure"),
-        #               [Input("valuation_button", "n_clicks"), State("valuation_input", "value")])
-        # def earnings_chart(n_clicks, value):
-        #     df = repo.set_stock_name(value).load_earnings().get_earnings()
-        #     cols = list(df.columns)
-        #     fig = go.Figure(
-        #         [
-        #             go.Scatter(
-        #                 name='收益',
-        #                 x=df[cols[0]],
-        #                 y=df[cols[1]],
-        #                 mode='lines+markers',
-        #                 line=dict(color='#6495ED'),
-        #             )
-        #         ],
-        #         layout={
-        #             "template": "plotly_white",
-        #             "title": {
-        #                 "text": value,
-        #                 "x": 0.5,
-        #                 "font": {
-        #                     "family": "Courier New",
-        #                     "size": 30,
-        #                 },
-        #             }
-        #         },
-        #     )
-        #     fig.update_layout(
-        #         yaxis_title='单位：元',
-        #         hovermode="x"
-        #     )
-        #     return fig

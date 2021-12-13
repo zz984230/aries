@@ -42,6 +42,7 @@ COL = [
 
 
 def get_table_data(table):
+    print([th.get_text() for k, th in enumerate(table.find_all('th')[:7]) if k != 1])
     trs = table.find_all('tr')
     rs = []
     for c in COL:

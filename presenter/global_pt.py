@@ -1,4 +1,4 @@
-from presenter.shower.dash_app import *
+from presenter.dash_app import *
 from constants.colors import *
 from dash.dependencies import Input, Output
 import dash
@@ -7,7 +7,7 @@ import dash_html_components as html
 
 
 class GlobalPt(object):
-    def __init__(self, logo_file, bg_file, balance_pt, valuation_pt, cloud_pt):
+    def __init__(self, logo_file, bg_file, balance_pt, valuation_pt, cloud_pt, financial_pt):
         self.__logo_file = logo_file
         self.__bg_file = bg_file
         self.__labels = ['资产负债表', '利润表', '现金流量表', '价值投资']
@@ -16,6 +16,7 @@ class GlobalPt(object):
         self.__balance_pt = balance_pt
         self.__valuation_pt = valuation_pt
         self.__cloud_pt = cloud_pt
+        self.__financial_pt = financial_pt
 
     def __init_layout(self):
         self.__left_layout = dbc.Col(id='left_layout', xs=1, style=dict(background=GAINSBORO))
@@ -87,6 +88,7 @@ class GlobalPt(object):
             [
                 dbc.Button("个股信息", id="valuation-collapse-0", block=True),
                 dbc.Button("大盘云图", id="valuation-collapse-1", block=True),
+                dbc.Button("财务比率", id="valuation-collapse-2", block=True),
             ]
         ]
 
@@ -109,8 +111,9 @@ class GlobalPt(object):
         @app.callback(Output("right_layout", "children"),
                       [Input("balance-collapse-0", "active"),
                        Input("valuation-collapse-0", "active"),
-                       Input("valuation-collapse-1", "active")])
-        def set_score_layout(kind_active, valuation_active, cloud_active):
+                       Input("valuation-collapse-1", "active"),
+                       Input("valuation-collapse-2", "active")])
+        def set_score_layout(kind_active, valuation_active, cloud_active, financial_active):
             ctx = dash.callback_context
             if not ctx.triggered:
                 return self.__right_layout.children
@@ -124,6 +127,8 @@ class GlobalPt(object):
                     return self.__valuation_pt.set_layout()
                 elif cloud_active:
                     return self.__cloud_pt.set_layout()
+                elif financial_active:
+                    return self.__financial_pt.set_layout()
 
             return self.__right_layout.children
 
