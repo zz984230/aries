@@ -29,6 +29,11 @@ class FinancialRatio(Repo):
             print(obj)
             print(e)
 
+    def __deal_abnormal(self, each):
+        avg_list = [float(v) for v in each if v != ABNORMAL_DATA]
+        avg = sum(avg_list) / len(avg_list)
+        return [avg if v == ABNORMAL_DATA else v for v in each]
+
     def __get_financial_table_data(self, table):
         trs = table.find_all('tr')
         rs = []
@@ -45,7 +50,7 @@ class FinancialRatio(Repo):
                         each.extend(t[1])
                     else:
                         d = td.get_text(strip=True)
-                        each.append(d if '--' not in d else each[-1])
+                        each.append(d if '--' not in d else ABNORMAL_DATA)
                 tmp.append(each[0])
                 tmp.extend(each[-5:])
                 rs.append(tmp)
@@ -53,6 +58,10 @@ class FinancialRatio(Repo):
         return rs
 
     def load_financial(self):
+        def avg(row):
+            row[row.isna()] = row.dropna().mean()
+            return row
+
         self.__get_stock_symbol()
 
         try:
@@ -66,6 +75,7 @@ class FinancialRatio(Repo):
             table_one.extend(table_two)
             self.__df = pd.DataFrame(table_one, columns=col)
             self.__df[col[1:]] = self.__df[col[1:]].applymap(lambda x: x.replace(',', '')).astype(float)
+            self.__df[col[1:]] = self.__df[col[1:]][self.__df[col[1:]] != float(ABNORMAL_DATA)].apply(avg, axis=1)
         except Exception as e:
             print(e)
             print(self.__df)
