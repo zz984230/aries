@@ -71,7 +71,10 @@ class FinancialRatioPt(object):
                 print(df_group_by_type)
                 children = [dcc.Tab(label=v, value=f'tab-{k}', children=[
                     dcc.Graph(figure=px.line_polar(r=list(df_group_by_type[f'{v}_score']), theta=self.__theta,
-                                                   range_r=[0, 100], line_close=True)),
+                                                   color_discrete_sequence=px.colors.sequential.Plasma_r,
+                                                   template="plotly_dark",
+                                                   title=value,
+                                                   range_r=[0, 100], line_close=True).update_traces(fill='toself')),
                 ]) for k, v in enumerate(cols[1:6])]
             except Exception as e:
                 print(e)

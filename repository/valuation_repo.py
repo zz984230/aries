@@ -26,7 +26,9 @@ class ValuationSheet(Repo):
         obj = self._make_request(self.__code_url)
         try:
             self.__stock_id = [v['data']['stockid'] for v in obj if
-                               v['data']['exchange'].endswith('SHSE') or v['data']['exchange'].endswith('SZSE')][0]
+                               v['data']['currency'] == '¥'][0]
+            # self.__stock_id = [v['data']['stockid'] for v in obj if
+            #                    v['data']['exchange'].endswith('SHSE') or v['data']['exchange'].endswith('SZSE')][0]
         except Exception as e:
             print(obj)
             print(e)
