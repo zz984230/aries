@@ -18,7 +18,7 @@ class CloudPt(object):
     def set_layout(self):
         return html.Div([
             dcc.Markdown(f"### 大盘云图"),
-            dbc.Input(id='cloud_input', placeholder="Input goes here...", value=3e+10, type="text",
+            dbc.Input(id='cloud_input', placeholder="Input goes here...", value=1e+5, type="text",
                       style={"width": 200, 'float': 'left'}),
             dbc.Button("Show Cloud Figure", color="secondary", id='cloud_button', className="me-1"),
             dcc.Graph(id="cloud1"),
