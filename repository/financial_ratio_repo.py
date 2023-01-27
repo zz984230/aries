@@ -4,6 +4,7 @@ from repository.repo import Repo
 from constants.constant import *
 from bs4 import BeautifulSoup
 import requests
+import logging
 
 os.environ['NO_PROXY'] = STOCK_DOMAIN
 
@@ -24,7 +25,7 @@ class FinancialRatio(Repo):
         obj = self._make_request(self.__code_url)
         try:
             self.__stock_symbol = [v['data']['symbol'] for v in obj if
-                                   v['data']['exchange'].endswith('SHSE') or v['data']['exchange'].endswith('SZSE')][0]
+                                   v['data']['currency'] == '¥'][0]
         except Exception as e:
             print(obj)
             print(e)
@@ -65,9 +66,11 @@ class FinancialRatio(Repo):
         self.__get_stock_symbol()
 
         try:
+            print(FINANCIAL_RATIO_URL % self.__stock_symbol)
             r = requests.get(FINANCIAL_RATIO_URL % self.__stock_symbol, verify=False, proxies=self.__proxies)
             soup = BeautifulSoup(r.text, 'lxml')
             t = soup.find(id='albs-yearly').find('table')
+            print(r.text)
             col = [th.get_text() for k, th in enumerate(t.find_all('th')[:7]) if k != 1]
             col[-1] = '近12个月'
             table_one = self.__get_financial_table_data(t)
@@ -77,7 +80,7 @@ class FinancialRatio(Repo):
             self.__df[col[1:]] = self.__df[col[1:]].applymap(lambda x: x.replace(',', '')).astype(float)
             self.__df[col[1:]] = self.__df[col[1:]][self.__df[col[1:]] != float(ABNORMAL_DATA)].apply(avg, axis=1)
         except Exception as e:
-            print(e)
+            logging.exception(e)
             print(self.__df)
 
         return self

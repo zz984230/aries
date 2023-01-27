@@ -26,7 +26,7 @@ class FinancialRatioPt(object):
             ]),
             html.Div([
                 dcc.Markdown(f"### 财务比率评分"),
-                dcc.Tabs(id="financial_tabs", value='tab-0'),
+                dcc.Tabs(id="financial_tabs", value='tab-4'),
             ], style=self.__half_left_width_stl),
         ])
 
