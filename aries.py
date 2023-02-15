@@ -41,5 +41,78 @@ class Program(object):
         app.run_server(debug=True)
 
 
+def gen_once(values):
+    from repository.valuation_repo import ValuationSheet
+    import plotly.graph_objs as go
+    from utils.util import Util
+
+    def gen(value):
+        repo = ValuationSheet(value)
+        df = repo.set_stock_name(value).load_valuation().get_valuation_data()
+        cols = list(df.columns)
+        fig = go.Figure(
+            [
+                go.Scatter(
+                    name='Upper Bound',
+                    x=df[cols[0]],
+                    y=df[cols[2]] * 1.3,
+                    mode='lines',
+                    marker=dict(color="#F08080"),
+                    line=dict(width=1),
+                    showlegend=False
+                ),
+                go.Scatter(
+                    name='估值',
+                    x=df[cols[0]],
+                    y=df[cols[2]],
+                    mode='lines',
+                    line=dict(color='#696969'),
+                    fillcolor='rgba(255, 228, 225, 0.5)',
+                    fill='tonexty',
+                ),
+                go.Scatter(
+                    name='Lower Bound',
+                    x=df[cols[0]],
+                    y=df[cols[2]] * 0.7,
+                    marker=dict(color="#32CD32"),
+                    line=dict(width=1),
+                    mode='lines',
+                    fillcolor='rgba(144, 238, 144, 0.3)',
+                    fill='tonexty',
+                    showlegend=False
+                ),
+                go.Scatter(
+                    name='价格',
+                    x=df[cols[0]],
+                    y=df[cols[1]],
+                    mode='lines',
+                    line=dict(color='#6495ED'),
+                )
+            ],
+            layout={
+                "template": "plotly_white",
+                "title": {
+                    "text": value,
+                    "x": 0.5,
+                    "font": {
+                        "family": "Courier New",
+                        "size": 30,
+                    },
+                }
+            },
+        )
+        fig.update_layout(
+            yaxis_title='单位：元',
+            hovermode="x",
+            width=1280,
+            height=800,
+        )
+        fig.write_image(f'./data/batch/{value}.png')
+
+    for v in Util.strip(values).split(','):
+        gen(v)
+
+
 if __name__ == "__main__":
-    fire.Fire(Program)
+    # fire.Fire(Program)
+    gen_once('贵州茅台， 长江电力，紫金矿业')

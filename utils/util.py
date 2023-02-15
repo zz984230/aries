@@ -8,3 +8,7 @@ class Util(object):
     @staticmethod
     def get_root_path():
         return _CUR_PATH[:_CUR_PATH.find(f"{constant.PROJECT_NAME}") + len(f"{constant.PROJECT_NAME}")]
+
+    @staticmethod
+    def strip(s):
+        return s.replace(' ', '').replace('，', ',')
