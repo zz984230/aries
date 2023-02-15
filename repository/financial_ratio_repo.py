@@ -70,7 +70,6 @@ class FinancialRatio(Repo):
             r = requests.get(FINANCIAL_RATIO_URL % self.__stock_symbol, verify=False, proxies=self.__proxies)
             soup = BeautifulSoup(r.text, 'lxml')
             t = soup.find(id='albs-yearly').find('table')
-            print(r.text)
             col = [th.get_text() for k, th in enumerate(t.find_all('th')[:7]) if k != 1]
             col[-1] = '近12个月'
             table_one = self.__get_financial_table_data(t)
