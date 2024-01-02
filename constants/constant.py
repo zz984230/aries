@@ -30,7 +30,8 @@ FINANCIAL_RATIO_COL = [
 #######################################
 STOCK_DOMAIN = 'www.gurufocus.cn'
 # 股票编码
-CODE_URL = f'https://{STOCK_DOMAIN}/search?locale=zh-hans&text=%s&type=stock'
+# CODE_URL = f'https://{STOCK_DOMAIN}/search?locale=zh-hans&text=%s&type=stock'
+CODE_URL = f'https://{STOCK_DOMAIN}/search?&text=%s&type=stock'
 
 # 估值信息
 VALUATION_URL = f'https://{STOCK_DOMAIN}/_api/chart/%s/valuation?locale=zh-hans'

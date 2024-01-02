@@ -23,7 +23,8 @@ class Program(object):
         cloud_pt = CloudPt()
         financial_pt = FinancialRatioPt()
 
-        self.__global_pt = GlobalPt(self.__cfg.logo_file, self.__cfg.bg_file, balance_pt, valuation_pt, cloud_pt, financial_pt).set_global_layout().set_left_layout().render()
+        self.__global_pt = GlobalPt(self.__cfg.logo_file, self.__cfg.bg_file, balance_pt, valuation_pt, cloud_pt,
+                                    financial_pt).set_global_layout().set_left_layout().render()
 
         self.__balance_uc = BalanceUc(self.__cfg, balance_pt)
         self.__valuation_uc = ValuationUc(valuation_pt)
@@ -45,10 +46,12 @@ def gen_once(values):
     from repository.valuation_repo import ValuationSheet
     import plotly.graph_objs as go
     from utils.util import Util
+    import time
 
     def gen(value):
         repo = ValuationSheet(value)
         df = repo.set_stock_name(value).load_valuation().get_valuation_data()
+        df.dropna(inplace=True)
         cols = list(df.columns)
         fig = go.Figure(
             [
@@ -92,7 +95,7 @@ def gen_once(values):
             layout={
                 "template": "plotly_white",
                 "title": {
-                    "text": value,
+                    "text": value.strip('%20'),
                     "x": 0.5,
                     "font": {
                         "family": "Courier New",
@@ -106,8 +109,10 @@ def gen_once(values):
             hovermode="x",
             width=1280,
             height=800,
+            # xaxis_title_text="记录投资点滴，不构成投资建议",
         )
-        fig.write_image(f'./data/batch/{value}.png')
+        fig.write_image(f"./data/batch/{value.strip('%20')}.png")
+        time.sleep(2)
 
     for v in Util.strip(values).split(','):
         gen(v)
@@ -115,4 +120,4 @@ def gen_once(values):
 
 if __name__ == "__main__":
     # fire.Fire(Program)
-    gen_once('贵州茅台， 长江电力，紫金矿业')
+    gen_once('曼恩斯特')

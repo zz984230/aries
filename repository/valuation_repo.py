@@ -17,6 +17,7 @@ class ValuationSheet(Repo):
         self.__stock_id = ""
         self.__col_name = ['日期', '价格', '估值']
         self.__company_description = ""
+        self.__stock_name = stock_name
 
     def set_stock_name(self, stock_name):
         self.__code_url = CODE_URL % stock_name
@@ -26,7 +27,7 @@ class ValuationSheet(Repo):
         obj = self._make_request(self.__code_url)
         try:
             self.__stock_id = [v['data']['stockid'] for v in obj if
-                               v['data']['currency'] == '¥'][0]
+                               v['data']['currency'] == '¥' and v['data']['display_name'] == self.__stock_name.strip('%20')][0]
             # self.__stock_id = [v['data']['stockid'] for v in obj if
             #                    v['data']['exchange'].endswith('SHSE') or v['data']['exchange'].endswith('SZSE')][0]
         except Exception as e:

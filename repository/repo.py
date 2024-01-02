@@ -14,4 +14,5 @@ class Repo(object):
         else:
             r = requests.get(url, verify=False)
 
+        print(url, r)
         return r.json()
