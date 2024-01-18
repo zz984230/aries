@@ -120,4 +120,4 @@ def gen_once(values):
 
 if __name__ == "__main__":
     # fire.Fire(Program)
-    gen_once('曼恩斯特')
+    gen_once('紫光股份，锌业股份')
