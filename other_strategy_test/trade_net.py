@@ -20,12 +20,12 @@ def trade_cal(start_price, start_num, trade_percent_list: list):
 
 
 if __name__ == '__main__':
-    start_price = 134.087
-    start_num = 16
+    start_price = 123.92
+    start_num = 58
     trade_percent_list = [
-        {"percent": 1, "times": 10, "opt_num": 2},
-        {"percent": 1, "times": 10, "opt_num": 2},
-        {"percent": 4, "times": 3, "opt_num": 2},
+        {"percent": 1, "times": 4, "opt_num": 2},
+        {"percent": 1, "times": 0, "opt_num": 2},
+        {"percent": 4, "times": 1, "opt_num": 2},
         {"percent": 7, "times": 2, "opt_num": 2},
     ]
     trade_cal(start_price, start_num, trade_percent_list)
