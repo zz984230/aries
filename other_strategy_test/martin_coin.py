@@ -26,21 +26,25 @@ def cal_decline(base_decline, add_ratio_gap, times) -> (list, float):
 def cal_fund(first_add, times, other_each_add, add_ratio_multiple) -> (list, float):
     fund_list = [first_add]
     for i in range(times):
-        fund_list.append(other_each_add * add_ratio_multiple)
-    return fund_list, math.fsum(fund_list)
+        fund_list.append(fund_list[-1] + other_each_add * math.pow(add_ratio_multiple, i))
+    return fund_list, fund_list[-1]
 
+
+def cal_cost(decline_list, fund_list):
+    pass
 
 def cal(bc: BaseConfig):
     decline_list, max_decline = cal_decline(bc.base_decline, bc.add_ratio_gap, bc.add_times)
-    _, max_fund = cal_fund(bc.first_add, bc.add_times, bc.other_each_add, bc.add_ratio_multiple)
-    print(f'最大下跌比例: {max_decline * 100}%')
     decline_list = [f'{d * 100}%' for d in decline_list]
-    print(f'每次下跌比例: {decline_list}')
-    print(f'所需资金: {max_fund}')
-    print(f'价格区间: {bc.init_price} - {bc.init_price * (1 - max_decline)}')
+    fund_list, max_fund = cal_fund(bc.first_add, bc.add_times, bc.other_each_add, bc.add_ratio_multiple)
+    print(f'最大下跌比例:        {max_decline * 100}%')
+    print(f'所需资金:            {max_fund}')
+    print(f'每次下跌比例:        {decline_list}')
+    print(f'每次下跌对应所需资金: {fund_list}')
+    print(f'价格区间:            {bc.init_price} - {bc.init_price * (1 - max_decline)}')
 
 
 if __name__ == '__main__':
-    bc = BaseConfig(init_price=7600.0, first_add=20, other_each_add=10, add_times=8, add_ratio_multiple=1.1,
-                    add_ratio_gap=1.2)
+    bc = BaseConfig(init_price=7600.0, first_add=10, other_each_add=10, add_times=10, add_ratio_multiple=1.1,
+                    add_ratio_gap=1.3)
     cal(bc)
