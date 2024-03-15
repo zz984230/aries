@@ -62,11 +62,11 @@ def cal(bc: BaseConfig):
     print(f'每次下跌对应所需资金: {fund_list}')
     print(f'每次加仓成本变化:     {cost_list}')
     print(f'每次价格:            {price_list}')
-    print(f'对应差价比例:         {[obj[0]*1.1/obj[1] for obj in zip(cost_list, price_list)]}')
+    print(f'对应差价比例:         {[obj[0]*1.01/obj[1] for obj in zip(cost_list, price_list)]}')
     print(f'价格区间:            {bc.init_price} - {bc.init_price * (1 - max_decline)}')
 
 
 if __name__ == '__main__':
-    bc = BaseConfig(init_price=8400.0, first_add=20, other_each_add=10, add_times=15, add_ratio_multiple=1.0,
+    bc = BaseConfig(base_decline=0.01, init_price=8400.0, first_add=20, other_each_add=10, add_times=15, add_ratio_multiple=1.0,
                     add_ratio_gap=1.1)
     cal(bc)
